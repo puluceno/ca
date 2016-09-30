@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 
 import br.com.silva.Tools.CAParser;
+import br.com.silva.Tools.FileTools;
 import br.com.silva.Tools.MaskTools;
 import br.com.silva.Tools.ReportParser;
 import br.com.silva.model.CA;
@@ -32,12 +34,10 @@ public class FileImporter {
 
 	public static void main(String[] args) throws IOException {
 
-		// FileTools.downloadFile(new URL(fileURL), fileLocation +
-		// "/caepi.zip");
+		FileTools.downloadFile(new URL(fileURL), fileLocation + "/caepi.zip");
 
-		// FileTools.unzipFile(fileLocation + "/caepi.zip", fileLocation +
-		// "/caepi.txt");
-		// caCollection.drop();
+		FileTools.unzipFile(fileLocation + "/caepi.zip", fileLocation + "/caepi.txt");
+		caCollection.drop();
 
 		long begin = new Date().getTime();
 		readFileAndInsert(fileLocation + "/caepi.txt");
@@ -110,8 +110,12 @@ public class FileImporter {
 
 	}
 
-	private static CA findCA(Document query) {
+	public static CA findCA(Document query) {
 		Document first = caCollection.find(query).first();
 		return CAParser.toObject(first);
+	}
+
+	public static Document findCADocument(Document query) {
+		return caCollection.find(query).first();
 	}
 }

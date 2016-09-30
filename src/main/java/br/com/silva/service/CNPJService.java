@@ -8,10 +8,14 @@ import org.json.JSONObject;
 
 import com.mashape.unirest.http.Unirest;
 
+import br.com.silva.Tools.MaskTools;
+
 public class CNPJService {
 	private static String url = "http://receitaws.com.br/v1/cnpj/{cnpj}";
 
 	public static Map<String, String> getCompanyInfo(String CNPJ) throws Exception {
+		if (!CNPJ.matches("^[0-9]+$"))
+			CNPJ = MaskTools.unMaskCNPJ(CNPJ);
 		JSONObject json = Unirest.get(url).routeParam("cnpj", CNPJ).asJson().getBody().getObject();
 
 		Map<String, String> companyInfo = new HashMap<String, String>();
@@ -21,7 +25,7 @@ public class CNPJService {
 		companyInfo.put("cnae", (String) activity.get("code"));
 		companyInfo.put("cnaeText", (String) activity.get("text"));
 		companyInfo.put("street", (String) json.get("logradouro"));
-		companyInfo.put("number", (String) json.get("numero"));
+		companyInfo.put("num", (String) json.get("numero"));
 		companyInfo.put("complement", (String) json.get("complemento"));
 		companyInfo.put("neighborhood", (String) json.get("bairro"));
 		companyInfo.put("zipcode", (String) json.get("cep"));
