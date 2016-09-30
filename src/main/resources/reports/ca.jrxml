@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-09-30T10:56:43 -->
+<!-- 2016-09-30T18:43:01 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ca" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="35" rightMargin="35" topMargin="35" bottomMargin="35" isIgnorePagination="true" uuid="b2d48567-23a4-467a-b5b0-88ebeea6064b">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -105,6 +105,316 @@
 		<fieldDescription><![CDATA[laboratoryName]]></fieldDescription>
 	</field>
 	<variable name="number" class="java.lang.String"/>
+	<group name="Group1">
+		<groupHeader>
+			<band height="36">
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="45" height="12" isRemoveLineWhenBlank="true" uuid="bc49ef2d-5fc5-4fe0-8456-2b1c2ad25db5"/>
+					<textElement markup="styled">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="10"/>
+					</textElement>
+					<text><![CDATA[Validade:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="12" width="40" height="12" isRemoveLineWhenBlank="true" uuid="4cb83dfb-8fdb-45e3-bdfb-22670881c591">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="10"/>
+					</textElement>
+					<text><![CDATA[Produto:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="24" width="60" height="12" isRemoveLineWhenBlank="true" uuid="1acb972c-1b11-41a6-a1f8-7f8e97cd0b7c">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="10"/>
+					</textElement>
+					<text><![CDATA[Equipamento:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="337" y="0" width="75" height="12" isRemoveLineWhenBlank="true" uuid="ae604ab4-93b0-47db-85e8-f5a56e2d2073">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Nº. do Processo:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="45" y="0" width="238" height="12" isRemoveLineWhenBlank="true" uuid="60c4cf4d-bbef-432a-abfc-5f43250f9f92"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="40" y="12" width="485" height="12" isRemoveLineWhenBlank="true" uuid="2fd83589-09fe-488c-aea3-f7be27efe14f"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{origin}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="60" y="24" width="465" height="12" isRemoveLineWhenBlank="true" uuid="ad44bb1f-e1e6-41d2-9035-ff2b2f21be75"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{equipment}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="412" y="0" width="113" height="12" isRemoveLineWhenBlank="true" uuid="56f1c61e-ad1f-4567-aeba-38fa242848a2"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{processNumber}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group2">
+		<groupHeader>
+			<band height="12">
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="-1" y="0" width="47" height="12" isRemoveLineWhenBlank="true" uuid="457471da-c192-42ad-b945-b0357120269e"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="10"/>
+					</textElement>
+					<text><![CDATA[Descrição:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="46" y="0" width="478" height="12" isRemoveLineWhenBlank="true" uuid="d9258a5e-015d-4e70-bd50-fb23a993c9b5"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{description}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group3">
+		<groupHeader>
+			<band height="12">
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="68" height="12" isRemoveLineWhenBlank="true" uuid="a50a98a5-ef67-46b3-b907-403a1d497779">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Aprovado para:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="68" y="0" width="457" height="12" isRemoveLineWhenBlank="true" uuid="c2341fbf-43c4-4c75-812d-8347ed93e533"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{approvedFor}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group4">
+		<groupHeader>
+			<band height="12">
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="55" height="12" isRemoveLineWhenBlank="true" uuid="cf7c9a9d-0948-46a7-a43a-4a31c6952491"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Observação:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="55" y="0" width="470" height="12" isRemoveLineWhenBlank="true" uuid="1d488173-0cd9-4e4d-bcc8-5f6a887927c2"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{observation}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group5">
+		<groupHeader>
+			<band height="72">
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="100" height="12" isRemoveLineWhenBlank="true" uuid="43a77f68-15c4-4561-86ca-69b19ed78cc0">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Restrições/Limitações:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="12" width="75" height="12" isRemoveLineWhenBlank="true" uuid="456b0d7f-67d8-4bad-b771-0f5d0d89a9ed"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Marcação do CA:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="24" width="55" height="12" isRemoveLineWhenBlank="true" uuid="2d1b3e71-a7f8-4d9f-a5a8-47a524cd705e">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Referências:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="36" width="30" height="12" isRemoveLineWhenBlank="true" uuid="19883332-97b9-4d54-8820-47e85115913c"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Cores:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="48" width="80" height="12" isRemoveLineWhenBlank="true" uuid="3a66a56c-e0e5-4a56-9b6f-7648e8c74b45"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Normas técnicas:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="100" y="0" width="425" height="12" isRemoveLineWhenBlank="true" uuid="dc7a5e9a-d942-4106-a8b2-b7f8181126eb"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{restrictions}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="75" y="12" width="450" height="12" isRemoveLineWhenBlank="true" uuid="f7a21610-4e41-4d2d-8ab4-a7ce60bf2a86"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{caLocation}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="55" y="24" width="470" height="12" isRemoveLineWhenBlank="true" uuid="80ade60d-fed1-44de-b79a-b9071437d0a1"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{references}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="30" y="36" width="495" height="12" isRemoveLineWhenBlank="true" uuid="5d97219e-ffe7-46eb-a6a1-e32f1d119c18"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{colors}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="80" y="48" width="445" height="12" isRemoveLineWhenBlank="true" uuid="ad76ed29-8492-4122-8505-37afa554f182"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{technicalRules}.toString().replace("[","").replace("]","")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="60" width="40" height="12" isRemoveLineWhenBlank="true" uuid="34883e02-71a7-4a0b-82db-a0dd9d781706"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Laudos:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group8"/>
+	<group name="Group7">
+		<groupFooter>
+			<band height="12">
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="45" height="12" isRemoveLineWhenBlank="true" uuid="910c3ab7-54a7-4677-a179-904ed8d13973">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Endereço:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="45" y="0" width="480" height="12" isRemoveLineWhenBlank="true" uuid="98155fd0-248b-412f-a1b7-32273d3d6c52"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{street} + " " +  $P{number} + " " + $P{complement}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group6">
+		<groupFooter>
+			<band height="24">
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="12" width="30" height="12" isRemoveLineWhenBlank="true" uuid="eef1d973-3695-4e22-bc66-fe334a3ea99f">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[CNPJ:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="30" y="12" width="90" height="12" isRemoveLineWhenBlank="true" uuid="d556433c-a199-4d6f-b29e-a8d845d1b411"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+						<paragraph tabStopWidth="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{cnpj}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="45" height="12" isRemoveLineWhenBlank="true" uuid="702197db-c008-4161-9a89-32147705320e">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
+					</textElement>
+					<text><![CDATA[Empresa:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="45" y="0" width="480" height="12" isRemoveLineWhenBlank="true" uuid="76228499-0e00-415e-af49-631c3ded011e"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{company}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="120" y="12" width="30" height="12" isRemoveLineWhenBlank="true" uuid="20e79d1f-333f-4b63-8586-825567f2bf39"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
+						<paragraph lineSpacingSize="0.0" tabStopWidth="0"/>
+					</textElement>
+					<text><![CDATA[CNAE:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="150" y="12" width="375" height="12" isRemoveLineWhenBlank="true" uuid="8faaa933-afe1-4eb1-b938-4bc8f3ceff55"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{cnae} + " - " + $P{cnaeText}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -119,281 +429,98 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="413" splitType="Stretch">
+		<band height="114" splitType="Stretch">
 			<staticText>
-				<reportElement x="142" y="5" width="240" height="15" uuid="9553eab7-acf8-498d-8207-024dcfb85ee0"/>
+				<reportElement x="142" y="5" width="240" height="15" isRemoveLineWhenBlank="true" uuid="9553eab7-acf8-498d-8207-024dcfb85ee0">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[MINISTÉRIO DO TRABALHO E EMPREGO - MTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="142" y="20" width="240" height="20" uuid="e55e10cc-d7ae-4430-b1a9-cecb38775ac3"/>
+				<reportElement x="142" y="20" width="240" height="15" isRemoveLineWhenBlank="true" uuid="e55e10cc-d7ae-4430-b1a9-cecb38775ac3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[SECRETARIA DE INSPEÇÃO DO TRABALHO - SIT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="96" y="40" width="332" height="20" uuid="aed002cb-d67b-4a24-8b57-9e73718c5668"/>
+				<reportElement x="96" y="35" width="332" height="15" isRemoveLineWhenBlank="true" uuid="aed002cb-d67b-4a24-8b57-9e73718c5668"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[DEPARTAMENTO DE SEGURANÇA E SAÚDE NO TRABALHO - DSST]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="154" y="75" width="216" height="15" uuid="e7283d32-9376-47ee-b8d5-edc2d7b1aba0"/>
+				<reportElement x="164" y="60" width="196" height="15" isRemoveLineWhenBlank="true" uuid="e7283d32-9376-47ee-b8d5-edc2d7b1aba0"/>
 				<textElement>
-					<font fontName="Arial" size="9" isBold="false"/>
+					<font fontName="SansSerif" size="9" isBold="false"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="137" y="97" width="193" height="14" uuid="7e939d80-5ae0-44dc-9af3-5cb0c4e9833c"/>
+				<reportElement x="137" y="82" width="193" height="15" isRemoveLineWhenBlank="true" uuid="7e939d80-5ae0-44dc-9af3-5cb0c4e9833c"/>
 				<textElement>
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[CERTIFICADO DE APROVAÇÃO - CA Nº]]></text>
 			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="150" width="50" height="20" uuid="bc49ef2d-5fc5-4fe0-8456-2b1c2ad25db5"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Validade:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="170" width="50" height="20" uuid="4cb83dfb-8fdb-45e3-bdfb-22670881c591"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Produto:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="190" width="70" height="20" uuid="1acb972c-1b11-41a6-a1f8-7f8e97cd0b7c"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Equipamento:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="210" width="60" height="20" uuid="457471da-c192-42ad-b945-b0357120269e"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Descrição:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="363" y="150" width="80" height="20" uuid="ae604ab4-93b0-47db-85e8-f5a56e2d2073"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Nº. do Processo:]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="330" y="97" width="140" height="14" isPrintWhenDetailOverflows="true" uuid="f1e5ea3d-d0ba-4642-86f9-ed55c78537f7"/>
+				<reportElement x="330" y="82" width="140" height="15" isRemoveLineWhenBlank="true" uuid="f1e5ea3d-d0ba-4642-86f9-ed55c78537f7"/>
 				<textElement>
-					<font fontName="Arial" size="12"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+					<paragraph tabStopWidth="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{number}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{number}.substring( 0,($P{number}.length()-3)) + "." +$P{number}.substring( ($P{number}.length()-3), $P{number}.length() )]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="50" y="150" width="230" height="20" isPrintWhenDetailOverflows="true" uuid="60c4cf4d-bbef-432a-abfc-5f43250f9f92"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="50" y="170" width="500" height="20" isPrintWhenDetailOverflows="true" uuid="2fd83589-09fe-488c-aea3-f7be27efe14f"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{origin}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="70" y="190" width="480" height="20" isPrintWhenDetailOverflows="true" uuid="ad44bb1f-e1e6-41d2-9035-ff2b2f21be75"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{equipment}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="60" y="210" width="490" height="43" isPrintWhenDetailOverflows="true" uuid="d9258a5e-015d-4e70-bd50-fb23a993c9b5"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{description}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="443" y="150" width="107" height="20" isPrintWhenDetailOverflows="true" uuid="56f1c61e-ad1f-4567-aeba-38fa242848a2"/>
-				<textElement>
-					<font fontName="Arial"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{processNumber}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="red" x="212" y="111" width="100" height="30" isPrintWhenDetailOverflows="true" uuid="c2fe6afc-342d-4d37-b4ee-8c5cc69662d7"/>
+				<reportElement style="red" x="212" y="100" width="100" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="c2fe6afc-342d-4d37-b4ee-8c5cc69662d7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{status}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="253" width="80" height="20" uuid="a50a98a5-ef67-46b3-b907-403a1d497779"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Aprovado para:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="293" width="111" height="20" uuid="43a77f68-15c4-4561-86ca-69b19ed78cc0"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Restrições/Limitações:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="313" width="90" height="20" uuid="456b0d7f-67d8-4bad-b771-0f5d0d89a9ed"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Marcação do CA:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="273" width="70" height="20" uuid="cf7c9a9d-0948-46a7-a43a-4a31c6952491"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Observação:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="333" width="70" height="20" uuid="2d1b3e71-a7f8-4d9f-a5a8-47a524cd705e"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Referências:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="353" width="40" height="20" uuid="19883332-97b9-4d54-8820-47e85115913c">
-					<printWhenExpression><![CDATA[$P{colors}!=null]]></printWhenExpression>
-				</reportElement>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Cores:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="373" width="90" height="20" uuid="3a66a56c-e0e5-4a56-9b6f-7648e8c74b45"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Normas técnicas:]]></text>
-			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="80" y="253" width="470" height="20" isPrintWhenDetailOverflows="true" uuid="c2341fbf-43c4-4c75-812d-8347ed93e533"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{approvedFor}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="70" y="273" width="480" height="20" isPrintWhenDetailOverflows="true" uuid="1d488173-0cd9-4e4d-bcc8-5f6a887927c2"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{observation}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="111" y="293" width="439" height="20" isPrintWhenDetailOverflows="true" uuid="dc7a5e9a-d942-4106-a8b2-b7f8181126eb"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{restrictions}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="90" y="313" width="460" height="20" isPrintWhenDetailOverflows="true" uuid="f7a21610-4e41-4d2d-8ab4-a7ce60bf2a86"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{caLocation}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="70" y="333" width="480" height="20" isPrintWhenDetailOverflows="true" uuid="80ade60d-fed1-44de-b79a-b9071437d0a1"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{references}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="40" y="353" width="510" height="20" isPrintWhenDetailOverflows="true" uuid="5d97219e-ffe7-46eb-a6a1-e32f1d119c18"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{colors}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="90" y="373" width="460" height="20" isPrintWhenDetailOverflows="true" uuid="ad76ed29-8492-4122-8505-37afa554f182"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{technicalRules}.toString().replace("[","").replace("]","")]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="393" width="40" height="20" uuid="34883e02-71a7-4a0b-82db-a0dd9d781706"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Laudos:]]></text>
-			</staticText>
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="40" splitType="Stretch">
+		<band height="24" splitType="Stretch">
 			<textField pattern="">
-				<reportElement x="60" y="0" width="490" height="20" uuid="dd8c115d-2eb5-4fdb-80aa-4f25621b8fa3"/>
+				<reportElement x="60" y="0" width="465" height="12" isRemoveLineWhenBlank="true" uuid="dd8c115d-2eb5-4fdb-80aa-4f25621b8fa3"/>
 				<textElement>
-					<font fontName="Arial" size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{reportNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="0" width="60" height="20" uuid="283c3f0a-0dcb-414d-aa3e-53ac63685927"/>
+				<reportElement x="0" y="0" width="60" height="12" isRemoveLineWhenBlank="true" uuid="283c3f0a-0dcb-414d-aa3e-53ac63685927"/>
 				<textElement>
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[Nº do Laudo:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="60" y="20" width="490" height="20" uuid="befde0a8-c881-41de-bf44-8acf74d8fbf5"/>
+				<reportElement x="55" y="12" width="470" height="12" isRemoveLineWhenBlank="true" uuid="befde0a8-c881-41de-bf44-8acf74d8fbf5"/>
 				<textElement>
-					<font fontName="Arial" size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{laboratoryName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="20" width="60" height="20" uuid="85e3b8ed-49fa-48ff-96f7-812cf15b7fa1"/>
+				<reportElement x="0" y="12" width="55" height="12" isRemoveLineWhenBlank="true" uuid="85e3b8ed-49fa-48ff-96f7-812cf15b7fa1">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[Laboratório:]]></text>
@@ -401,147 +528,72 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="100">
+		<band height="24">
 			<staticText>
-				<reportElement positionType="Float" x="0" y="0" width="50" height="20" uuid="702197db-c008-4161-9a89-32147705320e"/>
+				<reportElement positionType="Float" x="0" y="0" width="30" height="12" isRemoveLineWhenBlank="true" uuid="d7a437f9-50c1-45a6-8007-ed3eb87cee20">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Empresa:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="20" width="40" height="20" uuid="eef1d973-3695-4e22-bc66-fe334a3ea99f"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[CNPJ:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="40" width="50" height="20" uuid="910c3ab7-54a7-4677-a179-904ed8d13973"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[Endereço:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="60" width="40" height="20" uuid="d7a437f9-50c1-45a6-8007-ed3eb87cee20"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[Bairro:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="0" y="80" width="40" height="20" uuid="74869115-736c-46f5-825e-3336d3be235c"/>
+				<reportElement positionType="Float" x="0" y="12" width="35" height="12" isRemoveLineWhenBlank="true" uuid="74869115-736c-46f5-825e-3336d3be235c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[Cidade:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="207" y="20" width="40" height="20" uuid="20e79d1f-333f-4b63-8586-825567f2bf39"/>
+				<reportElement positionType="Float" x="370" y="0" width="25" height="12" isRemoveLineWhenBlank="true" uuid="3fa20125-5a29-4b27-b618-1895cb188f95">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
-					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
-				</textElement>
-				<text><![CDATA[CNAE:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="380" y="60" width="30" height="20" uuid="3fa20125-5a29-4b27-b618-1895cb188f95"/>
-				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[CEP:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="380" y="80" width="17" height="20" uuid="58231fe0-5faa-4ad5-92cf-05fd78408889"/>
+				<reportElement positionType="Float" x="370" y="12" width="17" height="12" isRemoveLineWhenBlank="true" uuid="58231fe0-5faa-4ad5-92cf-05fd78408889"/>
 				<textElement markup="html">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false"/>
 					<paragraph lineSpacingSize="0.0" tabStopWidth="30"/>
 				</textElement>
 				<text><![CDATA[UF:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="50" y="0" width="500" height="20" isPrintWhenDetailOverflows="true" uuid="76228499-0e00-415e-af49-631c3ded011e"/>
+				<reportElement positionType="Float" x="30" y="0" width="340" height="12" isRemoveLineWhenBlank="true" uuid="55a1769c-cd5c-4e0d-8e45-ec06c36b2aec"/>
 				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{company}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="40" y="20" width="140" height="20" isPrintWhenDetailOverflows="true" uuid="d556433c-a199-4d6f-b29e-a8d845d1b411"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{cnpj}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="50" y="40" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="98155fd0-248b-412f-a1b7-32273d3d6c52"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{street}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="40" y="60" width="323" height="20" isPrintWhenDetailOverflows="true" uuid="55a1769c-cd5c-4e0d-8e45-ec06c36b2aec"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{neighborhood}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="40" y="80" width="323" height="20" isPrintWhenDetailOverflows="true" uuid="ed1beae4-67a2-4953-8c8f-d67086b92fc8"/>
+				<reportElement positionType="Float" x="35" y="12" width="335" height="12" isRemoveLineWhenBlank="true" uuid="ed1beae4-67a2-4953-8c8f-d67086b92fc8"/>
 				<textElement>
-					<font fontName="Arial" size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{city}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="247" y="20" width="60" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="8faaa933-afe1-4eb1-b938-4bc8f3ceff55"/>
+				<reportElement positionType="Float" x="395" y="0" width="130" height="12" isRemoveLineWhenBlank="true" uuid="2f3ccd8e-e9f6-4067-9ced-4675ddcb8d82"/>
 				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{cnae}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="410" y="60" width="140" height="20" isPrintWhenDetailOverflows="true" uuid="2f3ccd8e-e9f6-4067-9ced-4675ddcb8d82"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{zipcode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="397" y="80" width="153" height="20" isPrintWhenDetailOverflows="true" uuid="0d64c726-89d3-4e7f-9f3e-48c65cca476c"/>
+				<reportElement positionType="Float" x="387" y="12" width="138" height="12" isRemoveLineWhenBlank="true" uuid="0d64c726-89d3-4e7f-9f3e-48c65cca476c"/>
 				<textElement>
-					<font fontName="Arial" size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{state}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="307" y="20" width="243" height="20" isPrintWhenDetailOverflows="true" uuid="cd16a654-50dd-4e1f-b7c9-a9eb75a259f9"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{cnaeText}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="150" y="40" width="40" height="20" isPrintWhenDetailOverflows="true" uuid="32704323-a97c-49f4-a832-10621b2f77af"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{num}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="190" y="40" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="a1d281cf-965e-478f-a972-91791b8769d8"/>
-				<textElement>
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{complement}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

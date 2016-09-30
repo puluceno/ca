@@ -33,31 +33,44 @@ public class FileImporter {
 	private static MongoCollection<Document> caCollection = MongoResource.getCollection("ca", "ca");
 
 	public static void main(String[] args) throws IOException {
+		long begin = new Date().getTime();
 
 		FileTools.downloadFile(new URL(fileURL), fileLocation + "/caepi.zip");
 
 		FileTools.unzipFile(fileLocation + "/caepi.zip", fileLocation + "/caepi.txt");
+		// TODO: remove line below
 		caCollection.drop();
 
-		long begin = new Date().getTime();
 		readFileAndInsert(fileLocation + "/caepi.txt");
+		createIndex("number");
 
-		System.out.println("Finished importing file. Elapsed time: " + ((new Date().getTime() - begin) / 1000) + "s.");
+		System.out
+				.println("Finished importing process. Elapsed time: " + ((new Date().getTime() - begin) / 1000) + "s.");
+	}
+
+	private static void createIndex(String field) {
+		System.out.println("Indexing the database for better performance...");
+		caCollection.createIndex(new Document(field, 1));
 	}
 
 	public static void readFileAndInsert(String fileName) {
+		System.out.println("Inserting records into the database...");
 		try {
 			File fileDir = new File(fileName);
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "ISO8859_1"));
 
 			String str;
-
+			int i = 0;
 			while ((str = in.readLine()) != null) {
 				insertCA(textToObject(str));
+				i++;
+				if (i % 500 == 0)
+					System.out.println(i + " documents read and inserted.");
 			}
 
 			in.close();
+			System.out.println(i + " records inserted.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -20,6 +20,7 @@ public class FileTools {
 	 * @param destinationFile
 	 */
 	public static void unzipFile(String sourceFile, String destinationFile) {
+		System.out.println("Unzipping file...");
 		File f = new File(sourceFile);
 		Archive a = null;
 		try {
@@ -35,6 +36,7 @@ public class FileTools {
 					FileOutputStream os = new FileOutputStream(out);
 					a.extractFile(fh, os);
 					os.close();
+					System.out.println("File unzipped sucesfully.");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -51,11 +53,10 @@ public class FileTools {
 	 * @throws IOException
 	 */
 	public static void downloadFile(URL url, String filePathAndName) throws IOException {
-		System.out.println("opening connection");
+		System.out.println("Downloading file...");
 		InputStream in = url.openStream();
 		FileOutputStream fos = new FileOutputStream(new File(filePathAndName));
 
-		System.out.println("reading file...");
 		int length = -1;
 		byte[] buffer = new byte[1024];// buffer for portion of data from
 		// connection
@@ -65,6 +66,6 @@ public class FileTools {
 
 		fos.close();
 		in.close();
-		System.out.println("file was downloaded");
+		System.out.println("File downloaded.");
 	}
 }

@@ -1,5 +1,6 @@
 package br.com.silva.Tools;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,18 +21,19 @@ public class PDFGenerator {
 
 	public static void main(String[] args) {
 		PDFGenerator gen = new PDFGenerator();
-		gen.generatePDF();
+		gen.generatePDF("38715");
 	}
 
 	@SuppressWarnings("unchecked")
-	public void generatePDF() {
+	public void generatePDF(String number) {
 		try {
+			long begin = new Date().getTime();
 			String caFile = getClass().getClass().getResource(CA_FILE).getFile();
 			// Compile jrxml file.
 			JasperReport jasperReport = JasperCompileManager.compileReport(caFile);
 
 			// Parameters for report
-			Document document = FileImporter.findCADocument(new Document());
+			Document document = FileImporter.findCADocument(new Document("number", number));
 			Map<String, String> companyInfo = CNPJService.getCompanyInfo(document.getString("cnpj"));
 			document.putAll(companyInfo);
 			List<Document> reports = (List<Document>) document.get("reports");
@@ -44,9 +46,12 @@ public class PDFGenerator {
 			// Export to PDF.
 			JasperExportManager.exportReportToPdfFile(print, "ca.pdf");
 
-			System.out.println("Done!");
+			System.out.println("File generated in " + (new Date().getTime() - begin) + "ms.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			if (e.getClass().equals(NullPointerException.class))
+				System.out.println("Unexistent CA with number " + number);
+			else
+				e.printStackTrace();
 		}
 	}
 }
