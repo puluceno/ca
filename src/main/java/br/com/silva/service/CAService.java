@@ -37,7 +37,7 @@ public class CAService {
 	}
 
 	public static ArrayList<Document> findCAList(Document query) {
-		return caCollection.find(query).into(new ArrayList<Document>());
+		return caCollection.find(query).limit(10).into(new ArrayList<Document>());
 	}
 
 }
