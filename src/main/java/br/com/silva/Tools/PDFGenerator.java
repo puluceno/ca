@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.bson.Document;
 
-import br.com.silva.business.FileImporter;
+import br.com.silva.service.CAService;
 import br.com.silva.service.CNPJService;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -21,7 +21,7 @@ public class PDFGenerator {
 
 	public static void main(String[] args) {
 		PDFGenerator gen = new PDFGenerator();
-		gen.generatePDF("38715");
+		gen.generatePDF("26294");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -33,7 +33,7 @@ public class PDFGenerator {
 			JasperReport jasperReport = JasperCompileManager.compileReport(caFile);
 
 			// Parameters for report
-			Document document = FileImporter.findCADocument(new Document("number", number));
+			Document document = CAService.findCA(new Document("number", number));
 			Map<String, String> companyInfo = CNPJService.getCompanyInfo(document.getString("cnpj"));
 			document.putAll(companyInfo);
 			List<Document> reports = (List<Document>) document.get("reports");

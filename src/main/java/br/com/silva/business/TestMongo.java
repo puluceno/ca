@@ -10,8 +10,8 @@ import org.bson.Document;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCursor;
 
 import br.com.silva.Tools.CAParser;
 import br.com.silva.model.CA;
@@ -24,19 +24,6 @@ public class TestMongo {
 
 	public static void main(String[] args) {
 
-		DB db = client.getDB("ca");
-
-		// Jongo jongo = new Jongo(db);
-		// MongoCollection ca = jongo.getCollection("ca");
-		//
-		// MongoCursor<CA> all1 = ca.find("{number: '1'}").as(CA.class);
-		// while (all1.hasNext()) {
-		// System.out.println(all1.next());
-		// }
-		// CA one = ca.findOne("{number: '1'}").as(CA.class);
-		//
-		// System.out.println(one);
-		//
 		caCollection.drop();
 
 		CA caObject = new CA();
@@ -71,7 +58,7 @@ public class TestMongo {
 		// }
 
 		System.out.println("Find all with iteration: ");
-		com.mongodb.client.MongoCursor<Document> cursor = caCollection.find().iterator();
+		MongoCursor<Document> cursor = caCollection.find().iterator();
 		try {
 			while (cursor.hasNext()) {
 				Document cur = cursor.next();

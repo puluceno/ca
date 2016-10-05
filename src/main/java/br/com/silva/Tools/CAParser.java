@@ -1,5 +1,8 @@
 package br.com.silva.Tools;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
 
 import com.google.gson.Gson;
@@ -32,5 +35,19 @@ public class CAParser {
 			}
 		}
 		return null;
+	}
+
+	public static Object toJson(Object ca) {
+		if (ca instanceof CA)
+			return gson.toJson(ca);
+		if (ca instanceof Document)
+			return ((Document) ca).toJson();
+		if (ca instanceof ArrayList<?>) {
+			List<String> caList = new ArrayList<String>();
+			((ArrayList<?>) ca).forEach(document -> caList.add((String) toJson(document)));
+			return caList;
+		}
+
+		return ca.toString();
 	}
 }

@@ -25,6 +25,7 @@ import br.com.silva.Tools.ReportParser;
 import br.com.silva.model.CA;
 import br.com.silva.model.Report;
 import br.com.silva.resources.MongoResource;
+import br.com.silva.service.CAService;
 
 public class FileImporter {
 
@@ -106,7 +107,10 @@ public class FileImporter {
 	private static void insertCA(CA caObj) {
 		Document document = CAParser.toDocument(caObj);
 
-		CA ca = findCA(new Document("number", caObj.getNumber()));
+		// TODO: CAs add more verifications to aprovado para, descricao,
+		// validade
+		// TODO: Insert logger for
+		CA ca = CAParser.toObject(CAService.findCA(new Document("number", caObj.getNumber())));
 		if (ca == null)
 			caCollection.insertOne(document);
 		else {
@@ -123,12 +127,4 @@ public class FileImporter {
 
 	}
 
-	public static CA findCA(Document query) {
-		Document first = caCollection.find(query).first();
-		return CAParser.toObject(first);
-	}
-
-	public static Document findCADocument(Document query) {
-		return caCollection.find(query).first();
-	}
 }
