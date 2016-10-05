@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
+import org.pmw.tinylog.Logger;
 
 import br.com.silva.service.CAService;
 import br.com.silva.service.CNPJService;
@@ -29,6 +30,7 @@ public class PDFGenerator {
 		try {
 			long begin = new Date().getTime();
 			String caFile = getClass().getClass().getResource(CA_FILE).getFile();
+
 			// Compile jrxml file.
 			JasperReport jasperReport = JasperCompileManager.compileReport(caFile);
 
@@ -46,12 +48,12 @@ public class PDFGenerator {
 			// Export to PDF.
 			JasperExportManager.exportReportToPdfFile(print, "ca.pdf");
 
-			System.out.println("File generated in " + (new Date().getTime() - begin) + "ms.");
+			Logger.info("PDF file generated in {}", (new Date().getTime() - begin) + "ms.");
 		} catch (Exception e) {
 			if (e.getClass().equals(NullPointerException.class))
-				System.out.println("Unexistent CA with number " + number);
+				Logger.error("CA with number {} does not exist.", number);
 			else
-				e.printStackTrace();
+				Logger.trace(e);
 		}
 	}
 }

@@ -2,6 +2,8 @@ package br.com.silva.resources;
 
 import java.util.HashMap;
 
+import org.pmw.tinylog.Logger;
+
 import spark.Filter;
 import spark.Request;
 import spark.Response;
@@ -34,7 +36,7 @@ public final class CorsFilter {
 		try {
 			Spark.after(filter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.trace(e);
 		}
 	}
 }

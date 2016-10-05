@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.bson.Document;
+import org.pmw.tinylog.Logger;
 
 import com.mongodb.client.MongoCollection;
 
@@ -39,23 +40,28 @@ public class FileImporter {
 		FileTools.downloadFile(new URL(fileURL), fileLocation + "/caepi.zip");
 
 		FileTools.unzipFile(fileLocation + "/caepi.zip", fileLocation + "/caepi.txt");
-		// TODO: remove line below
-		caCollection.drop();
 
 		readFileAndInsert(fileLocation + "/caepi.txt");
 		createIndex("number");
 
-		System.out
-				.println("Finished importing process. Elapsed time: " + ((new Date().getTime() - begin) / 1000) + "s.");
+		Logger.info("Finished importing process. Elapsed time: {}", ((new Date().getTime() - begin) / 1000) + "s.");
 	}
 
+	/**
+	 * 
+	 * @param field
+	 */
 	private static void createIndex(String field) {
-		System.out.println("Indexing the database for better performance...");
+		Logger.info("Indexing the database using {} for better performance...", field);
 		caCollection.createIndex(new Document(field, 1));
 	}
 
+	/**
+	 * 
+	 * @param fileName
+	 */
 	public static void readFileAndInsert(String fileName) {
-		System.out.println("Inserting records into the database...");
+		Logger.info("Reading file {}", fileName);
 		try {
 			File fileDir = new File(fileName);
 
@@ -66,17 +72,20 @@ public class FileImporter {
 			while ((str = in.readLine()) != null) {
 				insertCA(textToObject(str));
 				i++;
-				if (i % 500 == 0)
-					System.out.println(i + " documents read and inserted.");
 			}
 
 			in.close();
-			System.out.println(i + " records inserted.");
+			Logger.info("{} CAs read succesfully", i);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.trace(e);
 		}
 	}
 
+	/**
+	 * 
+	 * @param line
+	 * @return
+	 */
 	private static CA textToObject(String line) {
 		try {
 			String[] split = line.split("\\|");
@@ -95,8 +104,8 @@ public class FileImporter {
 					split[11], reports, split[12], split[13], split[14], rules);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("Failed to read line : " + line);
+			Logger.error("Failed to read line : {}", line);
+			Logger.trace(e);
 			return null;
 		}
 	}
@@ -107,10 +116,10 @@ public class FileImporter {
 	private static void insertCA(CA caObj) {
 		Document document = CAParser.toDocument(caObj);
 
-		// TODO: CAs add more verifications to aprovado para, descricao,
-		// validade
-		// TODO: Insert logger for
-		CA ca = CAParser.toObject(CAService.findCA(new Document("number", caObj.getNumber())));
+		CA ca = CAParser.toObject(CAService.findCA(new Document("number", caObj.getNumber())
+				.append("processNumber", caObj.getProcessNumber()).append("approvedFor", caObj.getApprovedFor())
+				.append("description", caObj.getDescription()).append("status", caObj.getStatus())));
+
 		if (ca == null)
 			caCollection.insertOne(document);
 		else {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+import org.pmw.tinylog.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -30,8 +31,8 @@ public class CAParser {
 				JsonObject obj = parser.parse(document.toJson()).getAsJsonObject();
 				return (new Gson()).fromJson(obj, CA.class);
 			} catch (Exception e) {
-				System.out.println(document.get("number"));
-				e.printStackTrace();
+				Logger.error("Failed to parse CA with number {}", document.get("number"));
+				Logger.trace(e);
 			}
 		}
 		return null;

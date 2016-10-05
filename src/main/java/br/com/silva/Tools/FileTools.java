@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.pmw.tinylog.Logger;
+
 import com.github.junrar.Archive;
 import com.github.junrar.impl.FileVolumeManager;
 import com.github.junrar.rarfile.FileHeader;
@@ -20,13 +22,13 @@ public class FileTools {
 	 * @param destinationFile
 	 */
 	public static void unzipFile(String sourceFile, String destinationFile) {
-		System.out.println("Unzipping file...");
+		Logger.info("Unzipping file {} to {}", sourceFile, destinationFile);
 		File f = new File(sourceFile);
 		Archive a = null;
 		try {
 			a = new Archive(new FileVolumeManager(f));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.trace(e);
 		}
 		if (a != null) {
 			FileHeader fh = a.nextFileHeader();
@@ -36,9 +38,9 @@ public class FileTools {
 					FileOutputStream os = new FileOutputStream(out);
 					a.extractFile(fh, os);
 					os.close();
-					System.out.println("File unzipped sucesfully.");
+					Logger.info("File unzipped sucesfully to {}", destinationFile);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.trace(e);
 				}
 			}
 		}
@@ -53,7 +55,7 @@ public class FileTools {
 	 * @throws IOException
 	 */
 	public static void downloadFile(URL url, String filePathAndName) throws IOException {
-		System.out.println("Downloading file...");
+		Logger.info("Downloading file from {}", url);
 		InputStream in = url.openStream();
 		FileOutputStream fos = new FileOutputStream(new File(filePathAndName));
 
@@ -66,6 +68,6 @@ public class FileTools {
 
 		fos.close();
 		in.close();
-		System.out.println("File downloaded.");
+		Logger.info("File downloaded from {} and saved in {}", url, filePathAndName);
 	}
 }
