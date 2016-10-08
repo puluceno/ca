@@ -43,6 +43,9 @@ public class FileImporter {
 
 		readFileAndInsert(fileLocation + "/caepi.txt");
 		createIndex("number");
+		createIndex("company");
+		createIndex("approvedFor");
+		createIndex("description");
 
 		Logger.info("Finished importing process. Elapsed time: {}", ((new Date().getTime() - begin) / 1000) + "s.");
 	}
