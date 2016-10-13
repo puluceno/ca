@@ -17,6 +17,7 @@ import com.mongodb.client.MongoCollection;
 
 import br.com.silva.Tools.CAParser;
 import br.com.silva.Tools.PDFGenerator;
+import br.com.silva.business.FileImporter;
 import br.com.silva.resources.CorsFilter;
 import br.com.silva.resources.MongoResource;
 
@@ -25,6 +26,7 @@ public class CAService {
 
 	public static void main(String[] args) {
 		CorsFilter.apply();
+		FileImporter.scheduleImport();
 
 		get("/ca", (req, res) -> {
 			Set<String> queryParams = req.queryParams();

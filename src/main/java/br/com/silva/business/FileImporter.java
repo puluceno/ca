@@ -7,16 +7,20 @@ import static com.mongodb.client.model.Updates.set;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.bson.Document;
 import org.pmw.tinylog.Logger;
 
+import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
 
 import br.com.silva.Tools.CAParser;
@@ -34,10 +38,29 @@ public class FileImporter {
 	private static String fileLocation = System.getProperty("user.home") + File.separator + "Documents";
 	private static MongoCollection<Document> caCollection = MongoResource.getCollection("ca", "ca");
 
-	public static void main(String[] args) throws IOException {
-		long begin = new Date().getTime();
+	public static void scheduleImport() {
+		TimerTask repeatedTask = new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					importCAFile();
+				} catch (Exception e) {
+					Logger.trace(e);
+				}
+			}
+		};
+		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+		executor.scheduleAtFixedRate(repeatedTask, 0, 10, TimeUnit.DAYS);
+	}
 
-		FileTools.downloadFile(new URL(fileURL), fileLocation + "/caepi.zip");
+	public static void importCAFile() {
+		long begin = new Date().getTime();
+		try {
+			FileTools.downloadFile(new URL(fileURL), fileLocation + "/caepi.zip");
+		} catch (Exception e) {
+			Logger.error("File does not exist in the given location.");
+			Logger.trace(e);
+		}
 
 		FileTools.unzipFile(fileLocation + "/caepi.zip", fileLocation + "/caepi.txt");
 
@@ -55,8 +78,15 @@ public class FileImporter {
 	 * @param field
 	 */
 	private static void createIndex(String field) {
-		Logger.info("Indexing the database using {} for better performance...", field);
-		caCollection.createIndex(new Document(field, 1));
+		try {
+			Logger.info("Indexing the database using {} for better performance...", field);
+			caCollection.createIndex(new Document(field, 1));
+		} catch (Exception e) {
+			if (e instanceof MongoCommandException)
+				Logger.error("Could not create index: key too large to index.");
+			else
+				Logger.trace(e);
+		}
 	}
 
 	/**
