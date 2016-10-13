@@ -60,8 +60,7 @@ public class FileTools {
 		FileOutputStream fos = new FileOutputStream(new File(filePathAndName));
 
 		int length = -1;
-		byte[] buffer = new byte[1024];// buffer for portion of data from
-		// connection
+		byte[] buffer = new byte[1024];
 		while ((length = in.read(buffer)) > -1) {
 			fos.write(buffer, 0, length);
 		}

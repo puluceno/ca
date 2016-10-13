@@ -49,10 +49,20 @@ public class CAService {
 
 	}
 
+	/**
+	 * 
+	 * @param query
+	 * @return
+	 */
 	public static Document findCA(Document query) {
 		return caCollection.find(query).first();
 	}
 
+	/**
+	 * 
+	 * @param query
+	 * @return
+	 */
 	public static ArrayList<Document> findCAList(Document query) {
 		if (query.isEmpty())
 			return caCollection.find().into(new ArrayList<Document>());

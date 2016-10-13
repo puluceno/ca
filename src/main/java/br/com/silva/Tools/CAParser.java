@@ -18,6 +18,11 @@ public class CAParser {
 	private static Gson gson = new Gson();
 	private static JsonParser parser = new JsonParser();
 
+	/**
+	 * 
+	 * @param caObj
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static Document toDocument(CA caObj) {
 		String json = gson.toJson(caObj);
@@ -25,6 +30,11 @@ public class CAParser {
 		return new Document(parse.toMap());
 	}
 
+	/**
+	 * 
+	 * @param document
+	 * @return
+	 */
 	public static CA toObject(Document document) {
 		if (document != null) {
 			try {
@@ -38,6 +48,11 @@ public class CAParser {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param ca
+	 * @return
+	 */
 	public static Object toJson(Object ca) {
 		if (ca instanceof CA)
 			return gson.toJson(ca);

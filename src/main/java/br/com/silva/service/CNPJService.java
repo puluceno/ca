@@ -32,7 +32,6 @@ public class CNPJService {
 		companyInfo.put("zipcode", (String) json.get("cep"));
 		companyInfo.put("city", (String) json.get("municipio"));
 		companyInfo.put("state", (String) json.get("uf"));
-		// Unirest.shutdown();
 
 		return companyInfo;
 	}

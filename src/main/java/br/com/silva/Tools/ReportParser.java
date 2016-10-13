@@ -17,6 +17,11 @@ public class ReportParser {
 	private static Gson gson = new Gson();
 	private static JsonParser parser = new JsonParser();
 
+	/**
+	 * 
+	 * @param reports
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static List<Document> toDocument(List<Report> reports) {
 		List<Document> reportDoc = new ArrayList<Document>();
@@ -28,6 +33,11 @@ public class ReportParser {
 		return reportDoc;
 	}
 
+	/**
+	 * 
+	 * @param document
+	 * @return
+	 */
 	public static Report toObject(Document document) {
 		if (document != null) {
 			JsonObject obj = parser.parse(document.toJson()).getAsJsonObject();

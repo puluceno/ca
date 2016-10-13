@@ -56,12 +56,7 @@ public class PDFGenerator {
 	public void generatePDF(Document ca) throws Exception {
 		try {
 			long begin = new Date().getTime();
-			// String caFile =
-			// getClass().getClass().getResource(CA_FILE).getFile();
 
-			// Compile jrxml file.
-			// JasperReport jasperReport =
-			// JasperCompileManager.compileReport(caFile);
 			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(getClass().getResourceAsStream(CA_FILE));
 
 			// Parameters for report
