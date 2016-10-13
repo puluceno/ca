@@ -16,10 +16,8 @@ public class CNPJService {
 	public static Map<String, String> getCompanyInfo(String CNPJ) throws Exception {
 		if (!CNPJ.matches("^[0-9]+$"))
 			CNPJ = MaskTools.unMaskCNPJ(CNPJ);
-		JSONObject json = Unirest.get(url).routeParam("cnpj", CNPJ)
-				.header("User-Agent",
-						"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36")
-				.asJson().getBody().getObject();
+
+		JSONObject json = Unirest.get(url).routeParam("cnpj", CNPJ).asJson().getBody().getObject();
 
 		Map<String, String> companyInfo = new HashMap<String, String>();
 
@@ -34,7 +32,7 @@ public class CNPJService {
 		companyInfo.put("zipcode", (String) json.get("cep"));
 		companyInfo.put("city", (String) json.get("municipio"));
 		companyInfo.put("state", (String) json.get("uf"));
-		Unirest.shutdown();
+		// Unirest.shutdown();
 
 		return companyInfo;
 	}

@@ -4,69 +4,70 @@
 	<groupId>br.com.silva</groupId>
 	<artifactId>ca</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	
+
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
-	
+
 	<dependencies>
-	
+
 		<!-- Dependency responsible for unzipping the document -->
 		<dependency>
 			<groupId>com.github.junrar</groupId>
 			<artifactId>junrar</artifactId>
 			<version>0.7</version>
 		</dependency>
-		
+
 		<!-- MongoDB Java Driver -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
 			<version>3.3.0</version>
 		</dependency>
-		
+
 		<!-- Gson library to convert POJOs to Json -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.7</version>
 		</dependency>
-		
+
 		<!-- UniREST to handle client restful requests -->
 		<dependency>
 			<groupId>com.mashape.unirest</groupId>
 			<artifactId>unirest-java</artifactId>
 			<version>1.4.9</version>
 		</dependency>
-		
+
 		<!-- Jasper Reports to generate PDF -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<version>6.3.0</version>
 		</dependency>
-		
+
 		<!-- Jasper Reports Fonts -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-fonts</artifactId>
 			<version>6.0.0</version>
 		</dependency>
-		
+
 		<!-- Spark framework to create restful endpoints -->
 		<dependency>
 			<groupId>com.sparkjava</groupId>
 			<artifactId>spark-core</artifactId>
 			<version>2.5</version>
 		</dependency>
-		
+
 		<!-- TinyLog for logging purposes -->
 		<dependency>
 			<groupId>org.tinylog</groupId>
 			<artifactId>tinylog</artifactId>
 			<version>1.1</version>
 		</dependency>
+
 	</dependencies>
 </project>

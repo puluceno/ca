@@ -1,12 +1,17 @@
 package br.com.silva.service;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.regex;
 import static spark.Spark.get;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.pmw.tinylog.Logger;
 
 import com.mongodb.client.MongoCollection;
 
@@ -29,15 +34,19 @@ public class CAService {
 			return CAParser.toJson(findCAList(query));
 		});
 
-		get("/pdf", (req, res) -> {
+		get("/ca/pdf", (req, res) -> {
 			Document ca = findCA(new Document("_id", new ObjectId(req.queryParams("id"))));
 			try {
 				PDFGenerator.getPDF(res, ca);
+				return res;
 			} catch (Exception e) {
+				Logger.trace(e);
 				res.body(e.getMessage());
 			}
-			return res;
+			return "Erro no servidor!";
+
 		});
+
 	}
 
 	public static Document findCA(Document query) {
@@ -45,22 +54,16 @@ public class CAService {
 	}
 
 	public static ArrayList<Document> findCAList(Document query) {
-		// List<Bson> regexes = new ArrayList<Bson>();
-		//
-		// Set<String> keySet = query.keySet();
-		// for (String key : keySet) {
-		// query.put(key, "*." + query.getString(key) + ".*");
-		// regexes.add(regex(key, query.getString(key), "i"));
-		// }
+		if (query.isEmpty())
+			return caCollection.find().into(new ArrayList<Document>());
+		List<Bson> regexes = new ArrayList<Bson>();
 
-		// query.keySet().forEach(key -> {
-		// query.put(key, "*." + query.getString(key) + ".*");
-		// regexes.add(regex(key, query.getString(key), "i"));
-		// });
+		query.keySet().forEach(key -> {
+			query.put(key, ".*" + query.getString(key) + ".*");
+			regexes.add(regex(key, query.getString(key), "i"));
+		});
 
-		// return caCollection.find(and(regexes)).limit(10).into(new
-		// ArrayList<Document>());
-		return caCollection.find(query).limit(10).into(new ArrayList<Document>());
+		return caCollection.find(and(regexes)).into(new ArrayList<Document>());
 	}
 
 }

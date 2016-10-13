@@ -15,19 +15,19 @@ import org.pmw.tinylog.Logger;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import br.com.silva.service.CNPJService;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import spark.Response;
 
 public class PDFGenerator {
 
-	private final static String CA_FILE = "/reports/ca.jrxml";
+	private final static String CA_FILE = "/reports/ca.jasper";
 
-	public static Object getPDF(Response res, Document ca) throws Exception {
+	public static HttpServletResponse getPDF(Response res, Document ca) throws Exception {
 		PDFGenerator gen = new PDFGenerator();
 		gen.generatePDF(ca);
 
@@ -37,14 +37,14 @@ public class PDFGenerator {
 			byte[] bytes = Files.readAllBytes(Paths.get(fileName));
 			HttpServletResponse raw = res.raw();
 
-			raw.setContentType("application/octet-stream");
-			raw.setHeader("Content-Disposition", "attachment; filename=" + ca.getString("number") + ".pdf");
+			raw.setContentType("application/pdf");
+			raw.addHeader("Content-Disposition", "attachment; filename=" + ca.getString("number") + ".pdf");
 			raw.getOutputStream().write(bytes);
 			raw.getOutputStream().flush();
 			raw.getOutputStream().close();
 
 			Logger.info("PDF file {} generated and sent to the user.", fileName);
-			return res.raw();
+			return raw;
 		} catch (Exception e) {
 			e.printStackTrace();
 			Logger.trace(e);
@@ -56,10 +56,13 @@ public class PDFGenerator {
 	public void generatePDF(Document ca) throws Exception {
 		try {
 			long begin = new Date().getTime();
-			String caFile = getClass().getClass().getResource(CA_FILE).getFile();
+			// String caFile =
+			// getClass().getClass().getResource(CA_FILE).getFile();
 
 			// Compile jrxml file.
-			JasperReport jasperReport = JasperCompileManager.compileReport(caFile);
+			// JasperReport jasperReport =
+			// JasperCompileManager.compileReport(caFile);
+			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(getClass().getResourceAsStream(CA_FILE));
 
 			// Parameters for report
 			Map<String, String> companyInfo = CNPJService.getCompanyInfo(ca.getString("cnpj"));
