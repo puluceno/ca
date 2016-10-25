@@ -30,19 +30,13 @@ public class CADownloader {
 		if (!directory.exists())
 			directory.mkdirs();
 
-		final WebClient webClient = new WebClient();
-		webClient.getOptions().setCssEnabled(false);
-		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-		webClient.getOptions().setThrowExceptionOnScriptError(false);
-		webClient.getOptions().setPrintContentOnFailingStatusCode(false);
-		webClient.getOptions().setUseInsecureSSL(true);
-		webClient.getOptions().setDoNotTrackEnabled(true);
+		WebClient webClient = initializeClient();
 		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies")
 				.setLevel(Level.OFF);
 
 		int numberGenerated = 0;
-		for (int number = 448; number < 100000; number++) {
+		for (int number = 712; number < 100000; number++) {
 			System.out.println("Downloading CA " + number);
 			long beginCA = new Date().getTime();
 
@@ -69,6 +63,7 @@ public class CADownloader {
 					} finally {
 						os.close();
 						is.close();
+						webResponse.cleanUp();
 						numberGenerated++;
 						Logger.info("CA {} encontrado e arquivado com o nome {}. Tempo de execução: {}", number,
 								number + PDF_EXTENSION,
@@ -83,11 +78,23 @@ public class CADownloader {
 			} finally {
 				webClient.getCurrentWindow().getJobManager().removeAllJobs();
 				webClient.close();
+				System.gc();
 			}
 		}
 		long absoluteEnd = new Date().getTime();
 		Logger.info("A operação total levou {}. {} arquivos foram gerados.",
 				TimeTools.formatTime((int) (absoluteBegin - absoluteEnd) / 1000), numberGenerated);
+	}
+
+	private static WebClient initializeClient() {
+		final WebClient webClient = new WebClient();
+		webClient.getOptions().setCssEnabled(false);
+		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		webClient.getOptions().setPrintContentOnFailingStatusCode(false);
+		webClient.getOptions().setUseInsecureSSL(true);
+		webClient.getOptions().setDoNotTrackEnabled(true);
+		return webClient;
 	}
 
 }
