@@ -2,6 +2,7 @@ package br.com.silva.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class CA implements Serializable {
 	private static final long serialVersionUID = 7542015795023650924L;
@@ -17,12 +18,14 @@ public class CA implements Serializable {
 	private String description;
 	private String caLocation;
 	private String references;
+	private String size;
 	private String colors;
 	private List<Report> reports;
 	private String approvedFor;
 	private String restrictions;
 	private String observation;
 	private List<String> technicalRules;
+	private Map<String, List<String>> attenuationTable;
 
 	/**
 	 * Empty Constructor
@@ -52,7 +55,7 @@ public class CA implements Serializable {
 	public CA(String number, String date, String status, String processNumber, String cnpj, String company,
 			String origin, String equipment, String description, String caLocation, String references, String colors,
 			List<Report> reports, String approvedFor, String restrictions, String observation,
-			List<String> technicalRules) {
+			List<String> technicalRules, Map<String, List<String>> attenuationTable) {
 		this.number = number;
 		this.date = date;
 		this.status = status;
@@ -70,6 +73,7 @@ public class CA implements Serializable {
 		this.restrictions = restrictions;
 		this.setObservation(observation);
 		this.technicalRules = technicalRules;
+		this.attenuationTable = attenuationTable;
 	}
 
 	/**
@@ -237,6 +241,14 @@ public class CA implements Serializable {
 		this.references = references;
 	}
 
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
+
 	public String getColors() {
 		return colors;
 	}
@@ -311,6 +323,20 @@ public class CA implements Serializable {
 	 */
 	public void setTechnicalRules(List<String> technicalRules) {
 		this.technicalRules = technicalRules;
+	}
+
+	/**
+	 * The first key parameter is the frequency. Inside the second map, the key
+	 * is attenuation, value is deviation
+	 * 
+	 * @return
+	 */
+	public Map<String, List<String>> getAttenuationTable() {
+		return attenuationTable;
+	}
+
+	public void setAttenuationTable(Map<String, List<String>> attenuationTable) {
+		this.attenuationTable = attenuationTable;
 	}
 
 	/*

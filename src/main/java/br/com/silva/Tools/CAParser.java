@@ -64,6 +64,6 @@ public class CAParser {
 			return caList;
 		}
 
-		return ca.toString();
+		return ca == null ? "" : ca.toString();
 	}
 }

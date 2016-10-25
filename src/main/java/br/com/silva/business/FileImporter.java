@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.pmw.tinylog.Logger;
 
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Updates;
 
 import br.com.silva.Tools.CAParser;
 import br.com.silva.Tools.FileTools;
@@ -34,9 +36,9 @@ import br.com.silva.service.CAService;
 
 public class FileImporter {
 
-	private static String fileURL = "http://www3.mte.gov.br/sistemas/CAEPI_Arquivos/tgg_export_caepi.zip";
 	private static String fileLocation = System.getProperty("user.home") + File.separator + "Documents";
 	private static MongoCollection<Document> caCollection = MongoResource.getCollection("ca", "ca");
+	private static MongoCollection<Document> paramsCollection = MongoResource.getDataBase("ca").getCollection("params");
 
 	public static void scheduleImport() {
 		TimerTask repeatedTask = new TimerTask() {
@@ -56,21 +58,31 @@ public class FileImporter {
 	public static void importCAFile() {
 		long begin = new Date().getTime();
 		try {
-			FileTools.downloadFile(new URL(fileURL), fileLocation + "/caepi.zip");
+			FileTools.downloadFile(new URL(CAService.findParams().getString("fileUrl")),
+					fileLocation + File.separator + "caepi.zip");
 		} catch (Exception e) {
 			Logger.error("File does not exist in the given location.");
 			Logger.trace(e);
 		}
 
-		FileTools.unzipFile(fileLocation + "/caepi.zip", fileLocation + "/caepi.txt");
+		FileTools.unzipFile(fileLocation + File.separator + "caepi.zip", fileLocation + File.separator + "caepi.txt");
 
-		readFileAndInsert(fileLocation + "/caepi.txt");
+		readFileAndInsert(fileLocation + File.separator + "caepi.txt");
 		createIndex("number");
 		createIndex("company");
-		createIndex("approvedFor");
-		createIndex("description");
+		updateParams(new Date());
 
 		Logger.info("Finished importing process. Elapsed time: {}", ((new Date().getTime() - begin) / 1000) + "s.");
+	}
+
+	public static void updateParams(Object... params) {
+		if (params[0] != null && params[0] instanceof Date) {
+			String date = new SimpleDateFormat("dd/MM/yyyy' - 'HH:mm:ss").format(params[0]);
+			paramsCollection.updateOne(new Document(), Updates.set("lastUpdated", date));
+		}
+		if (params[0] != null && params[0] instanceof String) {
+			paramsCollection.updateOne(new Document(), Updates.set("fileUrl", params[0]));
+		}
 	}
 
 	/**
@@ -134,7 +146,7 @@ public class FileImporter {
 
 			return new CA(split[0], split[1], split[2], MaskTools.maskProcessNumber(split[3]),
 					MaskTools.maskCNPJ(split[4]), split[5], split[6], split[7], split[8], split[9], split[10],
-					split[11], reports, split[12], split[13], split[14], rules);
+					split[11], reports, split[12], split[13], split[14], rules, null);
 
 		} catch (Exception e) {
 			Logger.error("Failed to read line : {}", line);

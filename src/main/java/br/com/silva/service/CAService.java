@@ -3,7 +3,9 @@ package br.com.silva.service;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.regex;
 import static spark.Spark.get;
+import static spark.Spark.post;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +13,7 @@ import java.util.Set;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.jsoup.Jsoup;
 import org.pmw.tinylog.Logger;
 
 import com.mongodb.client.MongoCollection;
@@ -23,6 +26,7 @@ import br.com.silva.resources.MongoResource;
 
 public class CAService {
 	private static MongoCollection<Document> caCollection = MongoResource.getCollection("ca", "ca");
+	private static MongoCollection<Document> paramsCollection = MongoResource.getDataBase("ca").getCollection("params");
 
 	public static void main(String[] args) {
 		CorsFilter.apply();
@@ -47,6 +51,34 @@ public class CAService {
 			}
 			return "Erro no servidor!";
 
+		});
+
+		get("/ca/key", (req, res) -> {
+			org.jsoup.nodes.Document doc = Jsoup.connect("https://consultaca.com/" + req.queryParams("number")).get();
+			String string = doc.getElementById("ctl00_ContentPlaceHolder1_btnImprimir").attributes().get("onclick");
+			String id = string.substring(12, (string.length() - 2));
+			String encode = URLEncoder.encode(id, "UTF-8");
+			System.out.println(id);
+			return encode;
+		});
+
+		get("/params", (req, res) -> {
+			return CAParser.toJson(findParams());
+		});
+
+		post("/fileUrl", (req, res) -> {
+			String url = req.body();
+			if (url != null && !url.isEmpty())
+				FileImporter.updateParams(url);
+			else
+				Logger.error("File url is not valid: {}", url);
+
+			return CAParser.toJson(findParams());
+		});
+
+		post("/updateDatabase", (req, res) -> {
+			FileImporter.importCAFile();
+			return CAParser.toJson(findParams());
 		});
 
 	}
@@ -76,6 +108,10 @@ public class CAService {
 		});
 
 		return caCollection.find(and(regexes)).into(new ArrayList<Document>());
+	}
+
+	public static Document findParams() {
+		return paramsCollection.find().first();
 	}
 
 }
