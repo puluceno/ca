@@ -133,7 +133,8 @@
 					<!-- MainClass in mainfest make a executable jar -->
 					<archive>
 						<manifest>
-							<mainClass>br.com.silva.service.CAService</mainClass>
+<!-- 							<mainClass>br.com.silva.service.CAService</mainClass> -->
+							<mainClass>br.com.silva.Tools.CADownloader</mainClass>
 						</manifest>
 					</archive>
 

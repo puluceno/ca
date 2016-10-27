@@ -41,7 +41,7 @@ public class CADownloader {
 
 		int numberGenerated = 0;
 
-		for (int number = 3305; number < 100000; number++) {
+		for (int number = 4583; number < 100000; number++) {
 			System.out.println("Downloading CA " + number);
 			WebClient webClient = initializeClient();
 			long beginCA = new Date().getTime();
@@ -70,6 +70,7 @@ public class CADownloader {
 						byte[] bytes = new byte[1024];
 						int read;
 						try {
+							is.reset();
 							while ((read = is.read(bytes)) != -1) {
 								os.write(bytes, 0, read);
 							}
