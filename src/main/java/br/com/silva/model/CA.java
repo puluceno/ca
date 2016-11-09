@@ -20,6 +20,8 @@ public class CA implements Serializable {
 	private String references;
 	private String size;
 	private String colors;
+	private String inmetroSticker;
+	private String inmetroConformityProof;
 	private List<Report> reports;
 	private String approvedFor;
 	private String restrictions;
@@ -257,6 +259,22 @@ public class CA implements Serializable {
 		this.colors = colors;
 	}
 
+	public String getInmetroSticker() {
+		return inmetroSticker;
+	}
+
+	public void setInmetroSticker(String inmetroSticker) {
+		this.inmetroSticker = inmetroSticker;
+	}
+
+	public String getInmetroConformityProof() {
+		return inmetroConformityProof;
+	}
+
+	public void setInmetroConformityProof(String inmetroConformityProof) {
+		this.inmetroConformityProof = inmetroConformityProof;
+	}
+
 	/**
 	 * @return the reports
 	 */
@@ -349,8 +367,10 @@ public class CA implements Serializable {
 		return "CA [number=" + number + ", date=" + date + ", status=" + status + ", processNumber=" + processNumber
 				+ ", cnpj=" + cnpj + ", company=" + company + ", origin=" + origin + ", equipment=" + equipment
 				+ ", description=" + description + ", caLocation=" + caLocation + ", references=" + references
-				+ ", reports=" + reports + ", approvedFor=" + approvedFor + ", restrictions=" + restrictions
-				+ ", technicalRules=" + technicalRules + "]";
+				+ ", size=" + size + ", colors=" + colors + ", inmetroSticker=" + inmetroSticker
+				+ ", inmetroConformityProof=" + inmetroConformityProof + ", reports=" + reports + ", approvedFor="
+				+ approvedFor + ", restrictions=" + restrictions + ", observation=" + observation + ", technicalRules="
+				+ technicalRules + ", attenuationTable=" + attenuationTable + "]";
 	}
 
 	/*

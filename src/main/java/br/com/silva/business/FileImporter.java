@@ -23,7 +23,6 @@ import org.pmw.tinylog.Logger;
 
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Updates;
 
 import br.com.silva.Tools.CAParser;
 import br.com.silva.Tools.FileTools;
@@ -78,10 +77,10 @@ public class FileImporter {
 	public static void updateParams(Object... params) {
 		if (params[0] != null && params[0] instanceof Date) {
 			String date = new SimpleDateFormat("dd/MM/yyyy' - 'HH:mm:ss").format(params[0]);
-			paramsCollection.updateOne(new Document(), Updates.set("lastUpdated", date));
+			paramsCollection.updateOne(new Document(), set("lastUpdated", date));
 		}
 		if (params[0] != null && params[0] instanceof String) {
-			paramsCollection.updateOne(new Document(), Updates.set("fileUrl", params[0]));
+			paramsCollection.updateOne(new Document(), set("fileUrl", params[0]));
 		}
 	}
 

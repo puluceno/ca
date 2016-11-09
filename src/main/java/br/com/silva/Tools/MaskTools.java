@@ -12,6 +12,10 @@ public class MaskTools {
 				+ processNumber.substring(11, 15) + "-" + processNumber.substring(15);
 	}
 
+	public static String unmasProcessNumber(String processNumber) {
+		return processNumber.replace(".", "").replaceAll("/", "").replaceAll("-", "");
+	}
+
 	/**
 	 * CNPJ mask: 99.999.999/9999-99
 	 * 
