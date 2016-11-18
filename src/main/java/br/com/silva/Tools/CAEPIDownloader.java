@@ -24,8 +24,8 @@ public class CAEPIDownloader {
 
 			HtmlPage page = (HtmlPage) webClient.getPage(url);
 
-			HtmlTextInput caNumber = (HtmlTextInput) page.getElementById("txtNumeroCA");
-			caNumber.setValueAttribute("1212");
+			HtmlTextInput number = (HtmlTextInput) page.getElementById("txtNumeroCA");
+			number.setValueAttribute("1212");
 
 			HtmlSubmitInput search = (HtmlSubmitInput) page.getElementById("btnConsultar");
 			HtmlPage page2 = search.click();

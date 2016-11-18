@@ -7,7 +7,7 @@ import java.util.Map;
 public class CA implements Serializable {
 	private static final long serialVersionUID = 7542015795023650924L;
 
-	private String number;
+	private int number;
 	private String date;
 	private String status;
 	private String processNumber;
@@ -20,6 +20,8 @@ public class CA implements Serializable {
 	private String references;
 	private String size;
 	private String colors;
+	private String technician;
+	private String professionalRegistration;
 	private String inmetroSticker;
 	private String inmetroConformityProof;
 	private List<Report> reports;
@@ -54,8 +56,8 @@ public class CA implements Serializable {
 	 * @param observation
 	 * @param technicalRules
 	 */
-	public CA(String number, String date, String status, String processNumber, String cnpj, String company,
-			String origin, String equipment, String description, String caLocation, String references, String colors,
+	public CA(int number, String date, String status, String processNumber, String cnpj, String company, String origin,
+			String equipment, String description, String caLocation, String references, String colors,
 			List<Report> reports, String approvedFor, String restrictions, String observation,
 			List<String> technicalRules, Map<String, List<String>> attenuationTable) {
 		this.number = number;
@@ -81,7 +83,7 @@ public class CA implements Serializable {
 	/**
 	 * @return the number
 	 */
-	public String getNumber() {
+	public int getNumber() {
 		return number;
 	}
 
@@ -89,7 +91,7 @@ public class CA implements Serializable {
 	 * @param number
 	 *            the number to set
 	 */
-	public void setNumber(String number) {
+	public void setNumber(int number) {
 		this.number = number;
 	}
 
@@ -259,6 +261,22 @@ public class CA implements Serializable {
 		this.colors = colors;
 	}
 
+	public String getTechnician() {
+		return technician;
+	}
+
+	public void setTechnician(String technician) {
+		this.technician = technician;
+	}
+
+	public String getProfessionalRegistration() {
+		return professionalRegistration;
+	}
+
+	public void setProfessionalRegistration(String professionalRegistration) {
+		this.professionalRegistration = professionalRegistration;
+	}
+
 	public String getInmetroSticker() {
 		return inmetroSticker;
 	}
@@ -382,9 +400,9 @@ public class CA implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((cnpj == null) ? 0 : cnpj.hashCode());
-		result = prime * result + ((number == null) ? 0 : number.hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + number;
+		result = prime * result + ((processNumber == null) ? 0 : processNumber.hashCode());
 		return result;
 	}
 
@@ -399,23 +417,20 @@ public class CA implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof CA))
 			return false;
 		CA other = (CA) obj;
-		if (cnpj == null) {
-			if (other.cnpj != null)
+		if (date == null) {
+			if (other.date != null)
 				return false;
-		} else if (!cnpj.equals(other.cnpj))
+		} else if (!date.equals(other.date))
 			return false;
-		if (number == null) {
-			if (other.number != null)
-				return false;
-		} else if (!number.equals(other.number))
+		if (number != other.number)
 			return false;
-		if (status == null) {
-			if (other.status != null)
+		if (processNumber == null) {
+			if (other.processNumber != null)
 				return false;
-		} else if (!status.equals(other.status))
+		} else if (!processNumber.equals(other.processNumber))
 			return false;
 		return true;
 	}

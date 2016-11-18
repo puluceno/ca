@@ -58,7 +58,6 @@ public class CAService {
 			String string = doc.getElementById("ctl00_ContentPlaceHolder1_btnImprimir").attributes().get("onclick");
 			String id = string.substring(12, (string.length() - 2));
 			String encode = URLEncoder.encode(id, "UTF-8");
-			System.out.println(id);
 			return encode;
 		});
 
