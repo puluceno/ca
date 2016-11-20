@@ -385,10 +385,11 @@ public class CA implements Serializable {
 		return "CA [number=" + number + ", date=" + date + ", status=" + status + ", processNumber=" + processNumber
 				+ ", cnpj=" + cnpj + ", company=" + company + ", origin=" + origin + ", equipment=" + equipment
 				+ ", description=" + description + ", caLocation=" + caLocation + ", references=" + references
-				+ ", size=" + size + ", colors=" + colors + ", inmetroSticker=" + inmetroSticker
-				+ ", inmetroConformityProof=" + inmetroConformityProof + ", reports=" + reports + ", approvedFor="
-				+ approvedFor + ", restrictions=" + restrictions + ", observation=" + observation + ", technicalRules="
-				+ technicalRules + ", attenuationTable=" + attenuationTable + "]";
+				+ ", size=" + size + ", colors=" + colors + ", technician=" + technician + ", professionalRegistration="
+				+ professionalRegistration + ", inmetroSticker=" + inmetroSticker + ", inmetroConformityProof="
+				+ inmetroConformityProof + ", reports=" + reports + ", approvedFor=" + approvedFor + ", restrictions="
+				+ restrictions + ", observation=" + observation + ", technicalRules=" + technicalRules
+				+ ", attenuationTable=" + attenuationTable + "]";
 	}
 
 	/*
