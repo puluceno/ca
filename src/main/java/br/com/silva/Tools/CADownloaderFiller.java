@@ -4,7 +4,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
-import static com.mongodb.client.model.Sorts.descending;
+import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
@@ -35,7 +35,7 @@ import com.mongodb.client.model.UpdateOptions;
 import br.com.silva.model.CA;
 import br.com.silva.resources.MongoResource;
 
-public class CADownloader extends Thread {
+public class CADownloaderFiller extends Thread {
 
 	private static final String PDF_EXTENSION = ".pdf";
 	private static final String DIR = System.getProperty("user.home") + File.separator + "Documents" + File.separator
@@ -51,7 +51,7 @@ public class CADownloader extends Thread {
 		int numberGenerated = 0;
 
 		List<Document> list = caStatusCollection.find().projection(fields(include("number"), excludeId()))
-				.sort(descending("number")).limit(1).into(new ArrayList<Document>());
+				.sort(ascending("number")).limit(1).into(new ArrayList<Document>());
 
 		int number = 1;
 

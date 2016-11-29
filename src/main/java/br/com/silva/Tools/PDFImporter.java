@@ -23,6 +23,7 @@ import br.com.silva.resources.MongoResource;
 
 public class PDFImporter {
 
+	private static final String CA_FOLDER = "/home/pulu/Documents/CA";
 	private static MongoCollection<Document> caPdfCollection = MongoResource.getDataBase("ca").getCollection("capdf");
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")
 			.getCollection("castatus");
@@ -32,7 +33,7 @@ public class PDFImporter {
 		caStatusCollection.drop();
 		long beginCA = new Date().getTime();
 		List<String> files = new ArrayList<String>();
-		try (Stream<Path> paths = Files.walk(Paths.get("/home/pulu/Documents/CA"))) {
+		try (Stream<Path> paths = Files.walk(Paths.get(CA_FOLDER))) {
 			paths.forEach(filePath -> {
 				if (Files.isRegularFile(filePath)) {
 					files.add(filePath.toString());

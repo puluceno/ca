@@ -143,7 +143,7 @@ public class FileImporter {
 			List<Report> reports = new ArrayList<Report>();
 			reports.add(new Report(MaskTools.maskCNPJ(split[15]), split[16], split[17]));
 
-			return new CA(Integer.valueOf(split[0].replaceAll("[^\\d]", "")), split[1], split[2],
+			return new CA(Integer.parseInt(split[0].replaceAll("[^\\d]", "")), split[1], split[2],
 					MaskTools.maskProcessNumber(split[3]), MaskTools.maskCNPJ(split[4]), split[5], split[6], split[7],
 					split[8], split[9], split[10], split[11], reports, split[12], split[13], split[14], rules, null);
 

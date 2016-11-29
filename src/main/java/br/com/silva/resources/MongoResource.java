@@ -8,18 +8,18 @@ import com.mongodb.client.MongoDatabase;
 
 public class MongoResource {
 
-	private static MongoClient client;
-	private static MongoDatabase db;
-	private static MongoCollection<Document> collection;
+	private static volatile MongoClient client;
+	private static volatile MongoDatabase db;
+	private static volatile MongoCollection<Document> collection;
 
-	public static MongoClient getClient() {
+	public static synchronized MongoClient getClient() {
 		if (client == null)
 			client = new MongoClient("localhost", 27017);
 
 		return client;
 	}
 
-	public static MongoDatabase getDataBase(String database) {
+	public static synchronized MongoDatabase getDataBase(String database) {
 		if (db == null) {
 			if (client == null)
 				getClient();
@@ -28,7 +28,7 @@ public class MongoResource {
 		return db;
 	}
 
-	public static MongoCollection<Document> getCollection(String collectionName, String database) {
+	public static synchronized MongoCollection<Document> getCollection(String collectionName, String database) {
 		if (collection == null) {
 			if (db == null)
 				getDataBase(database);

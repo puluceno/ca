@@ -25,8 +25,7 @@ public class CAReader {
 		CA ca = new CA();
 
 		try {
-			// PdfReader reader = new
-			// PdfReader("/home/pulu/Documents/CA/12916_07062011.pdf");
+			// PdfReader reader = new PdfReader("/home/pulu/Desktop/20929.pdf");
 			PdfReader reader = new PdfReader(pathToPDF);
 			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
 				String page = PdfTextExtractor.getTextFromPage(reader, i);
@@ -55,7 +54,7 @@ public class CAReader {
 				String[] line = page.split(LN + "");
 
 				if (page.contains("CERTIFICADO DE APROVAÇÃO - CA Nº")) {
-					int number = Integer.valueOf(
+					int number = Integer.parseInt(
 							page.substring(page.indexOf("Nº") + 3, page.indexOf("Nº") + 10).replaceAll("[^\\d]", ""));
 					ca.setNumber(number);
 				}
@@ -85,8 +84,8 @@ public class CAReader {
 					ca.setEquipment(removeNewLine(equipment));
 				}
 
-				Map<String, List<String>> attenuationTable = new HashMap<String, List<String>>();
 				if (hasAttenuationTable) {
+					Map<String, List<String>> attenuationTable = new HashMap<String, List<String>>();
 
 					String[] freqs = page
 							.substring(page.indexOf("Frequência (Hz): ") + 17, page.indexOf("Atenuação db:") - 1)
@@ -105,8 +104,8 @@ public class CAReader {
 					attenuationTable.put("frequencies", frequencies);
 					attenuationTable.put("dbAttenuations", dbAttenuations);
 					attenuationTable.put("deviations", deviations);
+					ca.setAttenuationTable(attenuationTable);
 				}
-				ca.setAttenuationTable(attenuationTable);
 
 				if (hasCompany) {
 					String company = page.substring(page.indexOf("Empresa: ") + 9, page.indexOf("CNPJ:") - 1);
@@ -120,14 +119,8 @@ public class CAReader {
 					ca.setCnpj(removeNewLine(cnpj));
 				}
 
-				if (!hasApprovedFor) {
-					ca.setApprovedFor("CA não contém este campo, portanto é irrelevante");
-					return ca;
-					// TODO: put this back when done
-				}
-
-				if (hasDescription) {
-					String description = page.substring(page.indexOf("Descrição:") + 11,
+				if (hasDescription && hasApprovedFor) {
+					String description = page.substring(page.indexOf("Descrição:") + 10,
 							page.indexOf(LN + "Aprovado para:"));
 					ca.setDescription(removeNewLine(description));
 				}
@@ -139,6 +132,10 @@ public class CAReader {
 											: page.indexOf("Observação: ") - 1)
 									: page.indexOf("Restrições/Limitações: "));
 					ca.setApprovedFor(removeNewLine(approvedFor));
+				} else {
+					ca.setApprovedFor("CA não contém este campo, portanto é irrelevante");
+					return ca;
+					// TODO: put it back
 				}
 
 				if (hasRestrictions) {
@@ -210,7 +207,7 @@ public class CAReader {
 						references = page.substring(page.indexOf(LN + "Referências:") + 14,
 								page.indexOf(LN + "Laudos:"));
 					} else {
-						references = page.substring(page.indexOf(LN + "Referências:") + 14,
+						references = page.substring(page.indexOf(LN + "Referências:") + 13,
 								page.indexOf(LN + "Empresa:"));
 					}
 
@@ -269,8 +266,11 @@ public class CAReader {
 								break;
 							}
 						}
-					} else
+					} else if (hasTechRules) {
 						colors = page.substring(page.indexOf("Cores: ") + 7, page.indexOf(LN + "Normas técnicas: "));
+					} else if (hasReports) {
+						colors = page.substring(page.indexOf("Cores: ") + 7, page.indexOf(LN + "Laudos:"));
+					}
 					ca.setColors(removeNewLine(colors));
 				}
 
