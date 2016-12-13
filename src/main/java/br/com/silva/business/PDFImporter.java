@@ -1,4 +1,4 @@
-package br.com.silva.Tools;
+package br.com.silva.business;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.combine;
@@ -19,11 +19,12 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 
 import br.com.silva.model.CA;
+import br.com.silva.model.CAParser;
 import br.com.silva.resources.MongoResource;
 
 public class PDFImporter {
 
-	private static final String CA_FOLDER = "/home/pulu/Documents/CA";
+	private static final String CA_FOLDER = "/home/pulu/Documents/CAs";
 	private static MongoCollection<Document> caPdfCollection = MongoResource.getDataBase("ca").getCollection("capdf");
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")
 			.getCollection("castatus");
@@ -45,13 +46,24 @@ public class PDFImporter {
 
 		System.out.println("There are " + files.size() + " files available.");
 		for (String file : files) {
-			CA ca = CAReader.readPDF(file);
+			try {
+				CA ca = CAReader.readPDF(file);
 
-			caPdfCollection.insertOne(CAParser.toDocument(ca).append("fileName", file));
+				caPdfCollection.insertOne(CAParser.toDocument(ca).append("fileName", file));
 
-			caStatusCollection.updateOne(eq("number", ca.getNumber()), combine(set("number", ca.getNumber()),
-					set("exist", true), set("downloaded", true), set("imported", true)),
-					new UpdateOptions().upsert(true));
+				caStatusCollection
+						.updateOne(
+								eq("number", ca.getNumber()), combine(set("number", ca.getNumber()), set("exist", true),
+										set("downloaded", true), set("imported", true)),
+								new UpdateOptions().upsert(true));
+			} catch (Exception e) {
+				int end = file.indexOf("_") == -1 ? file.indexOf(".pdf") : file.indexOf("_");
+				int number = Integer.parseInt(file.substring(CA_FOLDER.length() + 1, end));
+				caStatusCollection.updateOne(
+						eq("number", number), combine(set("number", number), set("exist", true),
+								set("downloaded", true), set("imported", false), set("retry", true)),
+						new UpdateOptions().upsert(true));
+			}
 
 		}
 		System.out.println("Operation finished in " + (new Date().getTime() - beginCA) + "ms");

@@ -7,7 +7,7 @@ import java.util.Map;
 public class CA implements Serializable {
 	private static final long serialVersionUID = 7542015795023650924L;
 
-	private int number;
+	private String number;
 	private String date;
 	private String status;
 	private String processNumber;
@@ -56,8 +56,8 @@ public class CA implements Serializable {
 	 * @param observation
 	 * @param technicalRules
 	 */
-	public CA(int number, String date, String status, String processNumber, String cnpj, String company, String origin,
-			String equipment, String description, String caLocation, String references, String colors,
+	public CA(String number, String date, String status, String processNumber, String cnpj, String company,
+			String origin, String equipment, String description, String caLocation, String references, String colors,
 			List<Report> reports, String approvedFor, String restrictions, String observation,
 			List<String> technicalRules, Map<String, List<String>> attenuationTable) {
 		this.number = number;
@@ -83,7 +83,7 @@ public class CA implements Serializable {
 	/**
 	 * @return the number
 	 */
-	public int getNumber() {
+	public String getNumber() {
 		return number;
 	}
 
@@ -91,7 +91,7 @@ public class CA implements Serializable {
 	 * @param number
 	 *            the number to set
 	 */
-	public void setNumber(int number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 
@@ -392,26 +392,20 @@ public class CA implements Serializable {
 				+ ", attenuationTable=" + attenuationTable + "]";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((approvedFor == null) ? 0 : approvedFor.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + number;
-		result = prime * result + ((processNumber == null) ? 0 : processNumber.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((equipment == null) ? 0 : equipment.hashCode());
+		result = prime * result + ((number == null) ? 0 : number.hashCode());
+		result = prime * result + ((origin == null) ? 0 : origin.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -421,17 +415,40 @@ public class CA implements Serializable {
 		if (!(obj instanceof CA))
 			return false;
 		CA other = (CA) obj;
+		if (approvedFor == null) {
+			if (other.approvedFor != null)
+				return false;
+		} else if (!approvedFor.equals(other.approvedFor))
+			return false;
 		if (date == null) {
 			if (other.date != null)
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
-		if (number != other.number)
-			return false;
-		if (processNumber == null) {
-			if (other.processNumber != null)
+		if (description == null) {
+			if (other.description != null)
 				return false;
-		} else if (!processNumber.equals(other.processNumber))
+		} else if (!description.equals(other.description))
+			return false;
+		if (equipment == null) {
+			if (other.equipment != null)
+				return false;
+		} else if (!equipment.equals(other.equipment))
+			return false;
+		if (number == null) {
+			if (other.number != null)
+				return false;
+		} else if (!number.equals(other.number))
+			return false;
+		if (origin == null) {
+			if (other.origin != null)
+				return false;
+		} else if (!origin.equals(other.origin))
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
 			return false;
 		return true;
 	}

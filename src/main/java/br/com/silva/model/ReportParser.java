@@ -1,4 +1,4 @@
-package br.com.silva.Tools;
+package br.com.silva.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
-
-import br.com.silva.model.Report;
 
 public class ReportParser {
 	private static Gson gson = new Gson();

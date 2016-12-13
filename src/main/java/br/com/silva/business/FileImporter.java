@@ -24,15 +24,21 @@ import org.pmw.tinylog.Logger;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
 
-import br.com.silva.Tools.CAParser;
 import br.com.silva.Tools.FileTools;
 import br.com.silva.Tools.MaskTools;
-import br.com.silva.Tools.ReportParser;
 import br.com.silva.model.CA;
+import br.com.silva.model.CAParser;
 import br.com.silva.model.Report;
+import br.com.silva.model.ReportParser;
 import br.com.silva.resources.MongoResource;
 import br.com.silva.service.CAService;
 
+/**
+ * Imports the CAEPI.txt file
+ * 
+ * @author pulu
+ *
+ */
 public class FileImporter {
 
 	private static String fileLocation = System.getProperty("user.home") + File.separator + "Documents";
@@ -143,9 +149,9 @@ public class FileImporter {
 			List<Report> reports = new ArrayList<Report>();
 			reports.add(new Report(MaskTools.maskCNPJ(split[15]), split[16], split[17]));
 
-			return new CA(Integer.parseInt(split[0].replaceAll("[^\\d]", "")), split[1], split[2],
-					MaskTools.maskProcessNumber(split[3]), MaskTools.maskCNPJ(split[4]), split[5], split[6], split[7],
-					split[8], split[9], split[10], split[11], reports, split[12], split[13], split[14], rules, null);
+			return new CA(split[0].replaceAll("[^\\d]", ""), split[1], split[2], MaskTools.maskProcessNumber(split[3]),
+					MaskTools.maskCNPJ(split[4]), split[5], split[6], split[7], split[8], split[9], split[10],
+					split[11], reports, split[12], split[13], split[14], rules, null);
 
 		} catch (Exception e) {
 			Logger.error("Failed to read line : {}", line);

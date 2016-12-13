@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 		</dependency>
 
 		<!-- Gson library to convert POJOs to Json -->
@@ -35,34 +35,12 @@
 		</dependency>
 
 
-		<!-- UniREST to handle client restful requests -->
-		<dependency>
-			<groupId>com.mashape.unirest</groupId>
-			<artifactId>unirest-java</artifactId>
-			<version>1.4.9</version>
-		</dependency>
-
-		<!-- Jasper Reports to generate PDF -->
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
-			<version>6.3.0</version>
-		</dependency>
-
-		<!-- Jasper Reports Fonts -->
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports-fonts</artifactId>
-			<version>6.0.0</version>
-		</dependency>
-
 		<!-- Spark framework to create restful endpoints -->
 		<dependency>
 			<groupId>com.sparkjava</groupId>
 			<artifactId>spark-core</artifactId>
-			<version>2.5.2</version>
+			<version>2.5</version>
 		</dependency>
-
 
 		<!-- TinyLog for logging purposes -->
 		<dependency>
@@ -78,19 +56,11 @@
 			<version>5.5.10</version>
 		</dependency>
 
-
-		<!-- jsoup HTML parser library @ http://jsoup.org/ -->
+		<!-- Apache commons lang -->
 		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.10.1</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/net.sourceforge.htmlunit/htmlunit -->
-		<dependency>
-			<groupId>net.sourceforge.htmlunit</groupId>
-			<artifactId>htmlunit</artifactId>
-			<version>2.23</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
 		</dependency>
 
 	</dependencies>
@@ -141,7 +111,9 @@
 							<!-- <mainClass>br.com.silva.service.CAService</mainClass> -->
 							<!-- <mainClass>br.com.silva.Tools.CADownloader</mainClass> -->
 							<!-- <mainClass>br.com.silva.Tools.CAEPIDownloader</mainClass> -->
-							<mainClass>br.com.silva.Tools.GapFiller</mainClass>
+							<!-- <mainClass>br.com.silva.Tools.GapFiller</mainClass> -->
+							<mainClass>br.com.silva.Tools.CAEPIDownloader2</mainClass>
+
 						</manifest>
 					</archive>
 

@@ -1,4 +1,4 @@
-package br.com.silva.Tools;
+package br.com.silva.business;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,9 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pmw.tinylog.Logger;
 
+import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
@@ -20,12 +21,13 @@ public class CAReader {
 
 	private static String LN = System.getProperty("line.separator");
 
-	public static CA readPDF(String pathToPDF) {
+	public static CA readPDF(String pathToPDF) throws Exception {
 		// public static void main(String[] args) {
 		CA ca = new CA();
 
 		try {
-			// PdfReader reader = new PdfReader("/home/pulu/Desktop/20929.pdf");
+			// PdfReader reader = new
+			// PdfReader("/home/pulu/Documents/CAs/33429_02032015.pdf");
 			PdfReader reader = new PdfReader(pathToPDF);
 			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
 				String page = PdfTextExtractor.getTextFromPage(reader, i);
@@ -54,8 +56,8 @@ public class CAReader {
 				String[] line = page.split(LN + "");
 
 				if (page.contains("CERTIFICADO DE APROVAÇÃO - CA Nº")) {
-					int number = Integer.parseInt(
-							page.substring(page.indexOf("Nº") + 3, page.indexOf("Nº") + 10).replaceAll("[^\\d]", ""));
+					String number = page.substring(page.indexOf("Nº") + 3, page.indexOf("Nº") + 10).replaceAll("[^\\d]",
+							"");
 					ca.setNumber(number);
 				}
 
@@ -63,11 +65,11 @@ public class CAReader {
 				String processNumber = "";
 
 				if (hasDate) {
-					date = page.substring(page.indexOf("Validade: ") + 10, page.indexOf("Nº. do Processo: ") - 1);
+					date = page.substring(page.indexOf("Validade:") + 9, page.indexOf("Nº. do Processo: ") - 1);
 					processNumber = page.substring(page.indexOf("Nº. do Processo: ") + 17,
 							page.indexOf("Produto: ") - 1);
-					ca.setDate(date);
-					ca.setProcessNumber(processNumber);
+					ca.setDate(removeNewLine(date));
+					ca.setProcessNumber(removeNewLine(processNumber));
 
 					String status = line[6].trim();
 					ca.setStatus(status.isEmpty() ? date : status);
@@ -75,7 +77,7 @@ public class CAReader {
 
 				if (hasOrigin) {
 					String origin = page.substring(page.indexOf("Produto: ") + 9, page.indexOf("Equipamento: ") - 1);
-					ca.setOrigin(origin);
+					ca.setOrigin(removeNewLine(origin));
 				}
 
 				if (hasEquipment) {
@@ -152,12 +154,12 @@ public class CAReader {
 
 				if (hasCaLocation) {
 					int indexOfReferences = page.indexOf(LN + "Referências:");
-					int indexOfCaLocation = page.indexOf("Marcação do CA:");
+					int indexOfCaLocation = page.indexOf(LN + "Marcação do CA:");
 					String caLocation = "";
 					if (indexOfReferences > indexOfCaLocation) {
-						caLocation = page.substring(indexOfCaLocation + 15, indexOfReferences);
+						caLocation = page.substring(indexOfCaLocation + 16, indexOfReferences);
 					} else {
-						caLocation = page.substring(indexOfCaLocation + 15,
+						caLocation = page.substring(indexOfCaLocation + 16,
 								page.indexOf(LN + "Referências:", indexOfReferences + 1));
 					}
 					ca.setCaLocation(removeNewLine(caLocation));
@@ -169,46 +171,55 @@ public class CAReader {
 				int indexOfProfessionalRegistration = page.indexOf("Nº Registro Profissional:");
 
 				if (hasReferences) {
+					int nReferences = StringUtils.countMatches(page, LN + "Referências:");
 					String references = "";
+					int referenceIndex = page.indexOf(LN + "Referências:");
+					int approvedForIndex = page.indexOf(LN + "Aprovado para:");
+					if (nReferences > 1 && referenceIndex < approvedForIndex) {
+						referenceIndex = page.indexOf(LN + "Referências:", referenceIndex + 1);
+					}
 					boolean done = false;
 					if (indexOfColors < indexOfSize) {
-						for (String string : line) {
-							if (string.contains("Referências: ")) {
-								references = string.substring(13, string.length());
+						for (int k = 0; k < line.length; k++) {
+							if (line[k].contains("Referências:")) {
+								references = line[k].substring(12, line[k].length());
+								if (references == null || references.isEmpty()) {
+									if (!line[k + 1].contains("Cores:") || !line[k + 1].contains("Tamanhos:")
+											|| !line[k + 1].contains("Nº Registro Profissional:")
+											|| !line[k + 1].contains("Responsável Técnico:")
+											|| !line[k + 1].contains("Marcação do selo do Inmetro::")
+											|| !line[k + 1].contains("Normas técnicas:")
+											|| !line[k + 1].contains("Laudos:") || !line[k + 1].contains("Empresa:")) {
+										references = line[k + 1].substring(0, line[k + 1].length());
+									}
+								}
 								break;
 							}
 						}
 					} else if (hasSize && !done) {
-						references = page.substring(page.indexOf(LN + "Referências:") + 14,
-								page.indexOf(LN + "Tamanhos:"));
+						references = page.substring(referenceIndex + 13, page.indexOf(LN + "Tamanhos:"));
 						done = true;
 					} else if (hasColors && !done) {
-						references = page.substring(page.indexOf(LN + "Referências:") + 14,
-								page.indexOf("Cores: ") - 1);
+						references = page.substring(referenceIndex + 13, page.indexOf("Cores: ") - 1);
 						done = true;
 					} else if (hasTechnician && !done) {
 						if (indexOfTechnician > indexOfProfessionalRegistration) {
-							references = page.substring(page.indexOf(LN + "Referências:") + 14,
-									page.indexOf("Nº Registro Profissional:"));
+							references = page.substring(referenceIndex + 13, page.indexOf("Nº Registro Profissional:"));
 						} else {
-							references = page.substring(page.indexOf(LN + "Referências:") + 14,
-									page.indexOf(LN + "Responsável Técnico:"));
+							references = page.substring(referenceIndex + 13, page.indexOf(LN + "Responsável Técnico:"));
 						}
 						done = true;
 					} else if (hasInmetroSticker && !done) {
-						references = page.substring(page.indexOf(LN + "Referências:") + 14,
+						references = page.substring(referenceIndex + 13,
 								page.indexOf(LN + "Marcação do selo do Inmetro:"));
 						done = true;
 					} else if (hasTechRules && !done) {
-						references = page.substring(page.indexOf(LN + "Referências:") + 14,
-								page.indexOf(LN + "Normas técnicas:"));
+						references = page.substring(referenceIndex + 13, page.indexOf(LN + "Normas técnicas:"));
 						done = true;
 					} else if (hasReports && !done) {
-						references = page.substring(page.indexOf(LN + "Referências:") + 14,
-								page.indexOf(LN + "Laudos:"));
+						references = page.substring(referenceIndex + 13, page.indexOf(LN + "Laudos:"));
 					} else {
-						references = page.substring(page.indexOf(LN + "Referências:") + 13,
-								page.indexOf(LN + "Empresa:"));
+						references = page.substring(referenceIndex + 13, page.indexOf(LN + "Empresa:"));
 					}
 
 					ca.setReferences(removeNewLine(references));
@@ -308,9 +319,24 @@ public class CAReader {
 				}
 
 				if (hasInmetroConformityProof) {
-					String inmetroConformityProof = page.substring(
-							page.indexOf("Atestado de conformidade Inmetro: ") + 34,
-							page.indexOf("Normas técnicas: ") - 1);
+					String inmetroConformityProof = "";
+					boolean done = false;
+					if (hasTechRules && !done) {
+						inmetroConformityProof = page.substring(page.indexOf("Atestado de conformidade Inmetro: ") + 34,
+								page.indexOf("Normas técnicas: ") - 1);
+						done = true;
+					}
+					if (hasReports && !done) {
+						inmetroConformityProof = page.substring(page.indexOf("Atestado de conformidade Inmetro: ") + 34,
+								page.indexOf(LN + "Laudos:"));
+						done = true;
+					}
+					if (hasCompany && !done) {
+						inmetroConformityProof = page.substring(page.indexOf("Atestado de conformidade Inmetro: ") + 34,
+								page.indexOf(LN + "Empresa:"));
+						done = true;
+					}
+
 					ca.setInmetroConformityProof(removeNewLine(inmetroConformityProof));
 				}
 
@@ -342,7 +368,7 @@ public class CAReader {
 						}
 
 						report.setLaboratoryName(removeNewLine(laboratoryName));
-						report.setReportNumber(reportNumber);
+						report.setReportNumber(removeNewLine(reportNumber));
 						reports.add(report);
 					}
 					ca.setReports(reports);
@@ -350,6 +376,8 @@ public class CAReader {
 
 			}
 		} catch (Exception e) {
+			if (e instanceof InvalidPdfException)
+				throw e;
 			// e.printStackTrace();
 			Logger.trace(e, "CA file " + pathToPDF);
 		}

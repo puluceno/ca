@@ -2,25 +2,22 @@ package br.com.silva.service;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.regex;
+import static com.mongodb.client.model.Projections.excludeId;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
-import org.jsoup.Jsoup;
 import org.pmw.tinylog.Logger;
 
 import com.mongodb.client.MongoCollection;
 
-import br.com.silva.Tools.CAParser;
-import br.com.silva.Tools.PDFGenerator;
 import br.com.silva.business.FileImporter;
+import br.com.silva.model.CAParser;
 import br.com.silva.resources.CorsFilter;
 import br.com.silva.resources.MongoResource;
 
@@ -30,7 +27,7 @@ public class CAService {
 
 	public static void main(String[] args) {
 		CorsFilter.apply();
-		FileImporter.scheduleImport();
+		// FileImporter.scheduleImport();
 
 		get("/ca", (req, res) -> {
 			Set<String> queryParams = req.queryParams();
@@ -41,9 +38,10 @@ public class CAService {
 		});
 
 		get("/ca/pdf", (req, res) -> {
-			Document ca = findCA(new Document("_id", new ObjectId(req.queryParams("id"))));
+			// Document ca = findCA(new Document("_id", new
+			// ObjectId(req.queryParams("id"))));
 			try {
-				PDFGenerator.getPDF(res, ca);
+				// TODO: get file from Apache server
 				return res;
 			} catch (Exception e) {
 				Logger.trace(e);
@@ -51,14 +49,6 @@ public class CAService {
 			}
 			return "Erro no servidor!";
 
-		});
-
-		get("/ca/key", (req, res) -> {
-			org.jsoup.nodes.Document doc = Jsoup.connect("https://consultaca.com/" + req.queryParams("number")).get();
-			String string = doc.getElementById("ctl00_ContentPlaceHolder1_btnImprimir").attributes().get("onclick");
-			String id = string.substring(12, (string.length() - 2));
-			String encode = URLEncoder.encode(id, "UTF-8");
-			return encode;
 		});
 
 		get("/params", (req, res) -> {
@@ -110,7 +100,7 @@ public class CAService {
 	}
 
 	public static Document findParams() {
-		return paramsCollection.find().first();
+		return paramsCollection.find().projection(excludeId()).first();
 	}
 
 }
