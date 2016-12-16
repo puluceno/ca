@@ -25,12 +25,12 @@ import br.com.silva.resources.MongoResource;
 public class PDFImporter {
 
 	private static final String CA_FOLDER = "/home/pulu/Documents/CAs";
-	private static MongoCollection<Document> caPdfCollection = MongoResource.getDataBase("ca").getCollection("capdf");
+	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")
 			.getCollection("castatus");
 
 	public static void main(String[] args) {
-		caPdfCollection.drop();
+		caCollection.drop();
 		caStatusCollection.drop();
 		long beginCA = new Date().getTime();
 		List<String> files = new ArrayList<String>();
@@ -49,7 +49,8 @@ public class PDFImporter {
 			try {
 				CA ca = CAReader.readPDF(file);
 
-				caPdfCollection.insertOne(CAParser.toDocument(ca).append("fileName", file));
+				caCollection.insertOne(
+						CAParser.toDocument(ca).append("fileName", file.replace("/home/pulu/Documents/CAs/", "")));
 
 				caStatusCollection
 						.updateOne(

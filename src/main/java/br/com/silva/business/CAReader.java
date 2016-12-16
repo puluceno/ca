@@ -14,6 +14,7 @@ import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
+import br.com.silva.exceptions.InvalidCAException;
 import br.com.silva.model.CA;
 import br.com.silva.model.Report;
 
@@ -66,6 +67,8 @@ public class CAReader {
 
 				if (hasDate) {
 					date = page.substring(page.indexOf("Validade:") + 9, page.indexOf("Nº. do Processo: ") - 1);
+					if (date.isEmpty())
+						throw new InvalidCAException("No date found!");
 					processNumber = page.substring(page.indexOf("Nº. do Processo: ") + 17,
 							page.indexOf("Produto: ") - 1);
 					ca.setDate(removeNewLine(date));
@@ -376,7 +379,7 @@ public class CAReader {
 
 			}
 		} catch (Exception e) {
-			if (e instanceof InvalidPdfException)
+			if (e instanceof InvalidPdfException || e instanceof InvalidCAException)
 				throw e;
 			// e.printStackTrace();
 			Logger.trace(e, "CA file " + pathToPDF);
@@ -386,7 +389,7 @@ public class CAReader {
 		// System.out.println(ca);
 	}
 
-	private static String removeNewLine(String string) {
+	static String removeNewLine(String string) {
 		return string.replace(LN, " ").replace("\r", " ").trim();
 	}
 }

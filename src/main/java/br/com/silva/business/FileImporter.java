@@ -1,18 +1,10 @@
 package br.com.silva.business;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.combine;
-import static com.mongodb.client.model.Updates.set;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,14 +16,9 @@ import org.pmw.tinylog.Logger;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
 
-import br.com.silva.Tools.FileTools;
-import br.com.silva.Tools.MaskTools;
-import br.com.silva.model.CA;
-import br.com.silva.model.CAParser;
-import br.com.silva.model.Report;
-import br.com.silva.model.ReportParser;
+import br.com.silva.data.CARepository;
+import br.com.silva.data.ParamsRepository;
 import br.com.silva.resources.MongoResource;
-import br.com.silva.service.CAService;
 
 /**
  * Imports the CAEPI.txt file
@@ -41,9 +28,13 @@ import br.com.silva.service.CAService;
  */
 public class FileImporter {
 
+	public static void main(String[] args) {
+		FileImporter.importCAFile();
+	}
+
 	private static String fileLocation = System.getProperty("user.home") + File.separator + "Documents";
 	private static MongoCollection<Document> caCollection = MongoResource.getCollection("ca", "ca");
-	private static MongoCollection<Document> paramsCollection = MongoResource.getDataBase("ca").getCollection("params");
+	private static MongoCollection<Document> updateCollection = MongoResource.getDataBase("ca").getCollection("update");
 
 	public static void scheduleImport() {
 		TimerTask repeatedTask = new TimerTask() {
@@ -63,31 +54,23 @@ public class FileImporter {
 	public static void importCAFile() {
 		long begin = new Date().getTime();
 		try {
-			FileTools.downloadFile(new URL(CAService.findParams().getString("fileUrl")),
-					fileLocation + File.separator + "caepi.zip");
+			// FileTools.downloadFile(new
+			// URL(CAService.findParams().getString("fileUrl")),
+			// fileLocation + File.separator + "caepi.zip");
 		} catch (Exception e) {
 			Logger.error("File does not exist in the given location.");
 			Logger.trace(e);
 		}
 
-		FileTools.unzipFile(fileLocation + File.separator + "caepi.zip", fileLocation + File.separator + "caepi.txt");
+		// FileTools.unzipFile(fileLocation + File.separator + "caepi.zip",
+		// fileLocation + File.separator + "caepi.txt");
 
 		readFileAndInsert(fileLocation + File.separator + "caepi.txt");
 		createIndex("number");
 		createIndex("company");
-		updateParams(new Date());
+		ParamsRepository.updateParams(new Date());
 
 		Logger.info("Finished importing process. Elapsed time: {}", ((new Date().getTime() - begin) / 1000) + "s.");
-	}
-
-	public static void updateParams(Object... params) {
-		if (params[0] != null && params[0] instanceof Date) {
-			String date = new SimpleDateFormat("dd/MM/yyyy' - 'HH:mm:ss").format(params[0]);
-			paramsCollection.updateOne(new Document(), set("lastUpdated", date));
-		}
-		if (params[0] != null && params[0] instanceof String) {
-			paramsCollection.updateOne(new Document(), set("fileUrl", params[0]));
-		}
 	}
 
 	/**
@@ -116,16 +99,17 @@ public class FileImporter {
 			File fileDir = new File(fileName);
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "ISO8859_1"));
-
+			updateCollection.drop();
 			String str;
-			int i = 0;
 			while ((str = in.readLine()) != null) {
-				insertCA(textToObject(str));
-				i++;
+				if (!str.contains("#NRRegistroCA"))
+					CARepository.findAndInsertCA(extractData(str));
 			}
 
 			in.close();
-			Logger.info("{} CAs read succesfully", i);
+
+			Logger.info("All CAs read succesfully!");
+			Logger.info("{} CAs added to update list", updateCollection.count());
 		} catch (Exception e) {
 			Logger.trace(e);
 		}
@@ -136,54 +120,25 @@ public class FileImporter {
 	 * @param line
 	 * @return
 	 */
-	private static CA textToObject(String line) {
+	private static Document extractData(String line) {
 		try {
 			String[] split = line.split("\\|");
 
-			List<String> rules = new ArrayList<String>();
-			if (split.length == 19)
-				rules.add(split[18]);
-			else
-				rules.add("");
+			Document query = new Document("number", split[0].replaceAll("[^\\d]", "")).append("date", split[1]);
+			// if (split.length >= 8 && split[7] != null)
+			// query.append("equipment", CAReader.removeNewLine(split[7]));
+			// if (split.length >= 9 && split[8] != null)
+			// query.append("description", CAReader.removeNewLine(split[8]));
+			// if (split.length >= 13 && split[12] != null)
+			// query.append("approvedFor", CAReader.removeNewLine(split[12]));
 
-			List<Report> reports = new ArrayList<Report>();
-			reports.add(new Report(MaskTools.maskCNPJ(split[15]), split[16], split[17]));
-
-			return new CA(split[0].replaceAll("[^\\d]", ""), split[1], split[2], MaskTools.maskProcessNumber(split[3]),
-					MaskTools.maskCNPJ(split[4]), split[5], split[6], split[7], split[8], split[9], split[10],
-					split[11], reports, split[12], split[13], split[14], rules, null);
+			return query;
 
 		} catch (Exception e) {
 			Logger.error("Failed to read line : {}", line);
 			Logger.trace(e);
 			return null;
 		}
-	}
-
-	/**
-	 * @param caObj
-	 */
-	private static void insertCA(CA caObj) {
-		Document document = CAParser.toDocument(caObj);
-
-		CA ca = CAParser.toObject(CAService.findCA(new Document("number", caObj.getNumber())
-				.append("processNumber", caObj.getProcessNumber()).append("approvedFor", caObj.getApprovedFor())
-				.append("description", caObj.getDescription()).append("status", caObj.getStatus())));
-
-		if (ca == null)
-			caCollection.insertOne(document);
-		else {
-			ca.getTechnicalRules().removeAll(caObj.getTechnicalRules());
-			ca.getTechnicalRules().addAll(caObj.getTechnicalRules());
-
-			ca.getReports().removeAll(caObj.getReports());
-			ca.getReports().addAll(caObj.getReports());
-
-			caCollection.findOneAndUpdate(eq("number", caObj.getNumber()),
-					combine(set("technicalRules", ca.getTechnicalRules()),
-							set("reports", ReportParser.toDocument(ca.getReports()))));
-		}
-
 	}
 
 }
