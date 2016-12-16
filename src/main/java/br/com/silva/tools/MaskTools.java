@@ -1,4 +1,4 @@
-package br.com.silva.Tools;
+package br.com.silva.tools;
 
 public class MaskTools {
 

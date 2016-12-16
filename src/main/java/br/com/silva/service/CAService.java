@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.pmw.tinylog.Logger;
 
 import br.com.silva.business.FileImporter;
+import br.com.silva.business.PDFImporter;
 import br.com.silva.data.CARepository;
 import br.com.silva.data.ParamsRepository;
 import br.com.silva.model.CAParser;
@@ -19,8 +20,6 @@ public class CAService {
 
 	public static void main(String[] args) {
 		init();
-		CorsFilter.apply();
-		// FileImporter.scheduleImport();
 
 		get("/ca", (req, res) -> {
 			Set<String> queryParams = req.queryParams();
@@ -52,6 +51,14 @@ public class CAService {
 	}
 
 	private static void init() {
+		clearLogs();
+		CorsFilter.apply();
+		PDFImporter.importAllPDF();
+		FileImporter.scheduleImport();
+
+	}
+
+	private static void clearLogs() {
 		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.SEVERE);
 		java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies")
 				.setLevel(Level.SEVERE);

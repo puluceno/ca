@@ -9,10 +9,13 @@ import static com.mongodb.client.model.Sorts.ascending;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.pmw.tinylog.Logger;
 
+import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
 
 import br.com.silva.resources.MongoResource;
@@ -50,10 +53,25 @@ public class CARepository {
 		return caCollection.find(and(regexes)).sort(ascending("number")).limit(100).into(new ArrayList<Document>());
 	}
 
-	public static void findAndInsertCA(Document query) {
-		Document ca = findCA(query, "number");
-		if (ca == null)
-			updateCollection.insertOne(new Document("number", query.get("number")));
+	public static void addToUpdate(Map<String, String> updateData) {
+		updateData.forEach((k, v) -> {
+			Document query = new Document("number", k).append("date", v);
+			Document ca = findCA(query, "number");
+			if (ca == null) {
+				updateCollection.insertOne(query);
+			}
+		});
+	}
 
+	public static void createIndex(String collection, String field) {
+		try {
+			Logger.info("Indexing the colletion '{}' for field '{}'.", collection, field);
+			MongoResource.getDataBase("ca").getCollection(collection).createIndex(new Document(field, 1));
+		} catch (Exception e) {
+			if (e instanceof MongoCommandException)
+				Logger.error("Could not create index: key too large to index.");
+			else
+				Logger.trace(e);
+		}
 	}
 }

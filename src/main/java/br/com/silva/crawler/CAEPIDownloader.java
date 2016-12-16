@@ -1,8 +1,6 @@
 package br.com.silva.crawler;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
@@ -42,33 +40,42 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 
-import br.com.silva.Tools.MaskTools;
-import br.com.silva.Tools.TimeTools;
 import br.com.silva.business.CAReader;
 import br.com.silva.exceptions.CAEPINotFoundException;
 import br.com.silva.model.CA;
 import br.com.silva.model.CAParser;
 import br.com.silva.resources.MongoResource;
+import br.com.silva.tools.MaskTools;
+import br.com.silva.tools.TimeTools;
 
 public class CAEPIDownloader extends Thread {
 
-	private static final String PDF_EXTENSION = ".pdf";
-	private static final String DIR = System.getProperty("user.home") + File.separator + "CAs/";
-	private static MongoCollection<Document> caPdfCollection = MongoResource.getDataBase("ca").getCollection("capdf");
+	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")
 			.getCollection("castatus");
+	private static MongoCollection<Document> updateCollection = MongoResource.getDataBase("ca").getCollection("update");
+
+	private static final String PDF_EXTENSION = ".pdf";
+	// private static final String DIR = System.getProperty("user.home") +
+	// File.separator + "CAs/";
+	private static final String DIR = "C:/xampp/htdocs/CAs";
+
 	private static AtomicInteger number = new AtomicInteger(0);
 	private static Object[] updateList;
 
 	public static void main(String[] args) throws Exception {
+		crawlCAS();
+	}
+
+	public static void crawlCAS() throws Exception {
 		Logger.info("Procedure started");
-		int threads = 4;
+		int threads = 8;
 		Logger.info("Running with {} threads", threads);
 
 		init();
 
-		updateList = caPdfCollection.find(and(regex("date", ".*condicionada.*", "i"))).sort(ascending("number"))
-				.projection(fields(include("number"), excludeId())).into(new ArrayList<Document>()).toArray();
+		updateList = updateCollection.find().projection(fields(include("number"), excludeId()))
+				.sort(ascending("number")).into(new ArrayList<Document>()).toArray();
 
 		List<CAEPIDownloader> list = new ArrayList<CAEPIDownloader>();
 
@@ -77,7 +84,7 @@ public class CAEPIDownloader extends Thread {
 			list.add(thread);
 		}
 		for (CAEPIDownloader a : list) {
-			Thread.sleep(500);
+			Thread.sleep(1000);
 			a.start();
 			Logger.info("Procedure started");
 		}
@@ -87,7 +94,7 @@ public class CAEPIDownloader extends Thread {
 	@Override
 	public void run() {
 		while (number.get() < updateList.length) {
-			int caNumber = ((Document) updateList[number.getAndIncrement()]).getInteger("number");
+			String caNumber = ((Document) updateList[number.getAndIncrement()]).getString("number");
 
 			WebClient webClient = initializeClient();
 			System.out.println("Downloading CA " + caNumber);
@@ -115,13 +122,13 @@ public class CAEPIDownloader extends Thread {
 				HtmlPage page = (HtmlPage) webClient.getPage(url);
 
 				HtmlTextInput inputNumber = (HtmlTextInput) page.getElementById("txtNumeroCA");
-				inputNumber.setValueAttribute(String.valueOf(caNumber));
+				inputNumber.setValueAttribute(caNumber);
 
 				HtmlSubmitInput search = (HtmlSubmitInput) page.getElementById("btnConsultar");
 				HtmlPage page2 = search.click();
 
 				HtmlInput details = null;
-				int tries = 10;
+				int tries = 30;
 				while (tries > 0 && details == null) {
 					tries--;
 					details = (HtmlInput) page2.getElementById("PlaceHolderConteudo_grdListaResultado_btnDetalhar_0");
@@ -135,7 +142,7 @@ public class CAEPIDownloader extends Thread {
 
 				HtmlSubmitInput viewCA = null;
 
-				int tries2 = 10;
+				int tries2 = 30;
 				while (tries2 > 0 && viewCA == null) {
 					tries2--;
 					viewCA = (HtmlSubmitInput) page3.getElementById("PlaceHolderConteudo_btnVisualizarCA");
@@ -145,7 +152,7 @@ public class CAEPIDownloader extends Thread {
 				}
 
 				Page click = viewCA.click();
-				int tries3 = 10;
+				int tries3 = 30;
 				while (tries3 > 0 && windows.size() == 0) {
 					tries3--;
 					synchronized (click) {
@@ -177,7 +184,7 @@ public class CAEPIDownloader extends Thread {
 		Logger.info("Operarion finished, there are no CA's left in the list");
 	}
 
-	private static synchronized void saveAndImportCA(long beginCA, int number, Page click, InputStream is)
+	private static synchronized void saveAndImportCA(long beginCA, String number, Page click, InputStream is)
 			throws FileNotFoundException, IOException {
 		File file = new File(DIR + number + PDF_EXTENSION);
 
@@ -199,15 +206,17 @@ public class CAEPIDownloader extends Thread {
 			File newFileName = new File(DIR + number + fromPDF[1] + PDF_EXTENSION);
 			boolean renamed = file.renameTo(newFileName);
 			if (renamed) {
-				caPdfCollection.replaceOne(eq("numer", number),
-						CAParser.toDocument((CA) fromPDF[0]).append("fileName", newFileName.getAbsolutePath()),
-						new UpdateOptions().upsert(true));
+				caCollection.insertOne(
+						CAParser.toDocument((CA) fromPDF[0]).append("fileName", newFileName.getAbsolutePath()));
 
 				caStatusCollection.updateOne(eq("number", number), combine(set("number", number), set("exist", true),
 						set("downloaded", true), set("imported", true)), new UpdateOptions().upsert(true));
 
+				updateCollection.deleteOne(eq("number", number));
+
 				Logger.info("CA {} encontrado e arquivado com o nome {}. Tempo de execução: {}", number, newFileName,
 						TimeTools.formatTime((int) ((new Date().getTime() - beginCA) / 1000)));
+
 			} else {
 				caStatusCollection.updateOne(eq("number", number), combine(set("number", number), set("exist", true),
 						set("downloaded", true), set("imported", false)), new UpdateOptions().upsert(true));
