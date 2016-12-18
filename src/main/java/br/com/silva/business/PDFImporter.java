@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.bson.Document;
@@ -29,7 +29,7 @@ public class PDFImporter {
 
 	// private static final String CA_FOLDER = "/home/pulu/Documents/CAs";
 	private static final String CA_FOLDER = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
-			+ "CAs" + File.separator;
+			+ "CAs";
 
 	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")
@@ -43,7 +43,7 @@ public class PDFImporter {
 		caCollection.drop();
 		caStatusCollection.drop();
 		long beginCA = new Date().getTime();
-		List<String> files = new ArrayList<String>();
+		Set<String> files = new HashSet<String>();
 		try (Stream<Path> paths = Files.walk(Paths.get(CA_FOLDER))) {
 			paths.forEach(filePath -> {
 				if (Files.isRegularFile(filePath)) {
