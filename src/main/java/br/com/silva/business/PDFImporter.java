@@ -28,7 +28,8 @@ import br.com.silva.resources.MongoResource;
 public class PDFImporter {
 
 	// private static final String CA_FOLDER = "/home/pulu/Documents/CAs";
-	private static final String CA_FOLDER = "C:/xampp/htdocs/CAs";
+	private static final String CA_FOLDER = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
+			+ "CAs" + File.separator;
 
 	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")

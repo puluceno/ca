@@ -19,8 +19,6 @@ import br.com.silva.resources.CorsFilter;
 public class CAService {
 
 	public static void main(String[] args) {
-		init();
-
 		get("/ca", (req, res) -> {
 			Set<String> queryParams = req.queryParams();
 			Document query = new Document();
@@ -47,6 +45,8 @@ public class CAService {
 			FileImporter.importCAFile();
 			return CAParser.toJson(ParamsRepository.findParams());
 		});
+
+		init();
 
 	}
 

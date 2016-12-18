@@ -1,6 +1,8 @@
 package br.com.silva.model;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ public class CA implements Serializable {
 	private String restrictions;
 	private String observation;
 	private List<String> technicalRules;
-	private Map<String, List<String>> attenuationTable;
+	private Map<String, String[]> attenuationTable;
 
 	/**
 	 * Empty Constructor
@@ -59,7 +61,7 @@ public class CA implements Serializable {
 	public CA(String number, String date, String status, String processNumber, String cnpj, String company,
 			String origin, String equipment, String description, String caLocation, String references, String colors,
 			List<Report> reports, String approvedFor, String restrictions, String observation,
-			List<String> technicalRules, Map<String, List<String>> attenuationTable) {
+			List<String> technicalRules, Map<String, String[]> attenuationTable) {
 		this.number = number;
 		this.date = date;
 		this.status = status;
@@ -367,29 +369,40 @@ public class CA implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Map<String, List<String>> getAttenuationTable() {
+	public Map<String, String[]> getAttenuationTable() {
 		return attenuationTable;
 	}
 
-	public void setAttenuationTable(Map<String, List<String>> attenuationTable) {
+	public void setAttenuationTable(Map<String, String[]> attenuationTable) {
 		this.attenuationTable = attenuationTable;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
+		final int maxLen = 20;
 		return "CA [number=" + number + ", date=" + date + ", status=" + status + ", processNumber=" + processNumber
 				+ ", cnpj=" + cnpj + ", company=" + company + ", origin=" + origin + ", equipment=" + equipment
 				+ ", description=" + description + ", caLocation=" + caLocation + ", references=" + references
 				+ ", size=" + size + ", colors=" + colors + ", technician=" + technician + ", professionalRegistration="
 				+ professionalRegistration + ", inmetroSticker=" + inmetroSticker + ", inmetroConformityProof="
-				+ inmetroConformityProof + ", reports=" + reports + ", approvedFor=" + approvedFor + ", restrictions="
-				+ restrictions + ", observation=" + observation + ", technicalRules=" + technicalRules
-				+ ", attenuationTable=" + attenuationTable + "]";
+				+ inmetroConformityProof + ", reports=" + (reports != null ? toString(reports, maxLen) : null)
+				+ ", approvedFor=" + approvedFor + ", restrictions=" + restrictions + ", observation=" + observation
+				+ ", technicalRules=" + (technicalRules != null ? toString(technicalRules, maxLen) : null)
+				+ ", attenuationTable="
+				+ (attenuationTable != null ? toString(attenuationTable.entrySet(), maxLen) : null) + "]";
+	}
+
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 	@Override

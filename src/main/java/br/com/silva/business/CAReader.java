@@ -3,7 +3,6 @@ package br.com.silva.business;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,13 +21,14 @@ public class CAReader {
 
 	private static String LN = System.getProperty("line.separator");
 
+	public static void main(String[] args) throws Exception {
+		System.out.println(readPDF("/home/pulu/Documents/CAs/10043_08082021.pdf"));
+	}
+
 	public static CA readPDF(String pathToPDF) throws Exception {
-		// public static void main(String[] args) {
 		CA ca = new CA();
 
 		try {
-			// PdfReader reader = new
-			// PdfReader("/home/pulu/Documents/CAs/33429_02032015.pdf");
 			PdfReader reader = new PdfReader(pathToPDF);
 			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
 				String page = PdfTextExtractor.getTextFromPage(reader, i);
@@ -90,25 +90,22 @@ public class CAReader {
 				}
 
 				if (hasAttenuationTable) {
-					Map<String, List<String>> attenuationTable = new HashMap<String, List<String>>();
+					Map<String, String[]> attenuationTable = new HashMap<String, String[]>();
 
 					String[] freqs = page
-							.substring(page.indexOf("Frequência (Hz): ") + 17, page.indexOf("Atenuação db:") - 1)
+							.substring(page.indexOf("Frequência (Hz):") + 17, page.indexOf("Atenuação db:") - 1)
 							.split(" ");
-					LinkedList<String> frequencies = new LinkedList<String>(Arrays.asList(freqs));
 
 					String[] dbs = page
 							.substring(page.indexOf("Atenuação db:") + 13, page.indexOf("Desvio Padrão:") - 1)
 							.split(" ");
-					LinkedList<String> dbAttenuations = new LinkedList<String>(Arrays.asList(dbs));
 
 					String[] devs = page.substring(page.indexOf("Desvio Padrão:") + 14, page.lastIndexOf(LN))
 							.split(" ");
-					LinkedList<String> deviations = new LinkedList<String>(Arrays.asList(devs));
 
-					attenuationTable.put("frequencies", frequencies);
-					attenuationTable.put("dbAttenuations", dbAttenuations);
-					attenuationTable.put("deviations", deviations);
+					attenuationTable.put("frequencies", removeBlanks(freqs));
+					attenuationTable.put("dbAttenuations", removeBlanks(dbs));
+					attenuationTable.put("deviations", removeBlanks(devs));
 					ca.setAttenuationTable(attenuationTable);
 				}
 
@@ -140,7 +137,6 @@ public class CAReader {
 				} else {
 					ca.setApprovedFor("CA não contém este campo, portanto é irrelevante");
 					return ca;
-					// TODO: put it back
 				}
 
 				if (hasRestrictions) {
@@ -381,12 +377,16 @@ public class CAReader {
 		} catch (Exception e) {
 			if (e instanceof InvalidPdfException || e instanceof InvalidCAException)
 				throw e;
-			// e.printStackTrace();
 			Logger.trace(e, "CA file " + pathToPDF);
 		}
-		// TODO: put this back when done
 		return ca;
-		// System.out.println(ca);
+	}
+
+	private static String[] removeBlanks(String[] oldArray) {
+		if (oldArray[0].isEmpty()) {
+			return Arrays.copyOfRange(oldArray, 1, oldArray.length);
+		}
+		return oldArray;
 	}
 
 	static String removeNewLine(String string) {

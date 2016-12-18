@@ -58,7 +58,8 @@ public class CAEPIDownloader extends Thread {
 	private static final String PDF_EXTENSION = ".pdf";
 	// private static final String DIR = System.getProperty("user.home") +
 	// File.separator + "CAs/";
-	private static final String DIR = "C:/xampp/htdocs/CAs";
+	private static final String DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
+			+ "CAs" + File.separator;
 
 	private static AtomicInteger number = new AtomicInteger(0);
 	private static Object[] updateList;
