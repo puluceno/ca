@@ -207,8 +207,7 @@ public class CAEPIDownloader extends Thread {
 			File newFileName = new File(DIR + number + fromPDF[1] + PDF_EXTENSION);
 			boolean renamed = file.renameTo(newFileName);
 			if (renamed) {
-				caCollection.insertOne(
-						CAParser.toDocument((CA) fromPDF[0]).append("fileName", newFileName.getAbsolutePath()));
+				caCollection.insertOne(CAParser.toDocument((CA) fromPDF[0]).append("fileName", newFileName.getName()));
 
 				caStatusCollection.updateOne(eq("number", number), combine(set("number", number), set("exist", true),
 						set("downloaded", true), set("imported", true)), new UpdateOptions().upsert(true));
