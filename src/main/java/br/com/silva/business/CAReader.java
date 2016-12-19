@@ -19,7 +19,7 @@ import br.com.silva.model.Report;
 
 public class CAReader {
 
-	private static String LN = System.getProperty("line.separator");
+	private static String LN = "\n";// System.getProperty("line.separator");
 
 	public static void main(String[] args) throws Exception {
 		System.out.println(readPDF("/home/pulu/Documents/CAs/10043_08082021.pdf"));
