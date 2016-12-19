@@ -221,6 +221,8 @@ public class CAEPIDownloader extends Thread {
 				caStatusCollection.updateOne(eq("number", number), combine(set("number", number), set("exist", true),
 						set("downloaded", true), set("imported", false)), new UpdateOptions().upsert(true));
 
+				updateCollection.deleteOne(eq("number", number));
+
 				Logger.info("Não importado! CA {} encontrado e arquivado com o nome {}. Tempo de execução: {}", number,
 						newFileName, TimeTools.formatTime((int) ((new Date().getTime() - beginCA) / 1000)));
 			}
