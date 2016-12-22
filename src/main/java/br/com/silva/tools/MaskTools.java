@@ -12,7 +12,7 @@ public class MaskTools {
 				+ processNumber.substring(11, 15) + "-" + processNumber.substring(15);
 	}
 
-	public static String unmasProcessNumber(String processNumber) {
+	public static String unMaskProcessNumber(String processNumber) {
 		return processNumber.replace(".", "").replaceAll("/", "").replaceAll("-", "");
 	}
 
@@ -34,5 +34,23 @@ public class MaskTools {
 	 */
 	public static String unMaskCNPJ(String CNPJ) {
 		return CNPJ.replace(".", "").replace("/", "").replace("-", "");
+	}
+
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static String unMaskDate(String date) {
+		return date.replaceAll("/", "");
+	}
+
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static String removeLeadingZeroes(String value) {
+		return new Long(value).toString();
 	}
 }

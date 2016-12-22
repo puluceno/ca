@@ -9,7 +9,6 @@ import static com.mongodb.client.model.Sorts.ascending;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -22,7 +21,6 @@ import br.com.silva.resources.MongoResource;
 
 public class CARepository {
 	private static MongoCollection<Document> caCollection = MongoResource.getCollection("ca", "ca");
-	private static MongoCollection<Document> updateCollection = MongoResource.getDataBase("ca").getCollection("update");
 
 	public static Document findCA(Document query, String... fields) {
 		Document ca;
@@ -35,14 +33,12 @@ public class CARepository {
 		return ca;
 	}
 
-	/**
-	 * 
-	 * @param query
-	 * @return
-	 */
 	public static ArrayList<Document> findCAList(Document query) {
-		if (query.isEmpty())
-			return caCollection.find().limit(100).into(new ArrayList<Document>());
+		if (query.isEmpty()) {
+			ArrayList<Document> allCA = caCollection.find().limit(100).into(new ArrayList<Document>());
+			allCA.add(new Document("count", count()));
+			return allCA;
+		}
 		List<Bson> regexes = new ArrayList<Bson>();
 
 		query.keySet().forEach(key -> {
@@ -50,23 +46,36 @@ public class CARepository {
 			regexes.add(regex(key, query.getString(key), "i"));
 		});
 
-		return caCollection.find(and(regexes)).sort(ascending("number")).limit(100).into(new ArrayList<Document>());
+		ArrayList<Document> cas = caCollection.find(and(regexes)).limit(100).sort(ascending("number"))
+				.into(new ArrayList<Document>());
+		cas.add(new Document("count", (int) caCollection.count(and(regexes))));
+		return cas;
 	}
 
-	public static void addToUpdate(Map<String, String> updateData) {
-		updateData.forEach((k, v) -> {
-			Document query = new Document("number", k).append("date", v);
-			Document ca = findCA(query, "number");
-			if (ca == null) {
-				updateCollection.insertOne(query);
-			}
-		});
+	public static int count() {
+		return (int) caCollection.count();
 	}
 
 	public static void createIndex(String collection, String field) {
 		try {
 			Logger.info("Indexing the colletion '{}' for field '{}'.", collection, field);
 			MongoResource.getDataBase("ca").getCollection(collection).createIndex(new Document(field, 1));
+		} catch (Exception e) {
+			if (e instanceof MongoCommandException)
+				Logger.error("Could not create index: key too large to index.");
+			else
+				Logger.trace(e);
+		}
+	}
+
+	public static void createCoumpoundIndex(String collection, String... fields) {
+		try {
+			Document index = new Document();
+			for (int i = 0; i < fields.length; i++) {
+				index.append(fields[i], 1);
+			}
+			MongoResource.getDataBase("ca").getCollection(collection).createIndex(index);
+			Logger.info("Index created in the colletion '{}' for field '{}'.", collection, index.entrySet());
 		} catch (Exception e) {
 			if (e instanceof MongoCommandException)
 				Logger.error("Could not create index: key too large to index.");

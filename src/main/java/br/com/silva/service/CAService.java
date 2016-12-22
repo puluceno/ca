@@ -11,14 +11,17 @@ import org.pmw.tinylog.Logger;
 
 import br.com.silva.business.FileImporter;
 import br.com.silva.business.PDFImporter;
+import br.com.silva.crawler.CAEPIDownloader;
 import br.com.silva.data.CARepository;
 import br.com.silva.data.ParamsRepository;
+import br.com.silva.data.UpdateRepository;
 import br.com.silva.model.CAParser;
 import br.com.silva.resources.CorsFilter;
 
 public class CAService {
 
 	public static void main(String[] args) {
+
 		get("/ca", (req, res) -> {
 			Set<String> queryParams = req.queryParams();
 			Document query = new Document();
@@ -29,6 +32,10 @@ public class CAService {
 
 		get("/params", (req, res) -> {
 			return CAParser.toJson(ParamsRepository.findParams());
+		});
+
+		get("/ca/count", (req, res) -> {
+			return CAParser.toJson(CARepository.count());
 		});
 
 		post("/fileUrl", (req, res) -> {
@@ -42,8 +49,13 @@ public class CAService {
 		});
 
 		post("/updateDatabase", (req, res) -> {
-			FileImporter.importCAFile();
-			return CAParser.toJson(ParamsRepository.findParams());
+			FileImporter.importCAList();
+			CAEPIDownloader.crawlCAS();
+			return CAParser.toJson(ParamsRepository.findParams().append("updateCount", UpdateRepository.count()));
+		});
+
+		post("/ca", (req, res) -> {
+			return PDFImporter.saveAndImportCA(req.body());
 		});
 
 		init();

@@ -26,6 +26,7 @@ import org.bson.Document;
 import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
 import org.pmw.tinylog.writers.FileWriter;
+import org.pmw.tinylog.writers.SharedFileWriter;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -56,10 +57,11 @@ public class CAEPIDownloader extends Thread {
 	private static MongoCollection<Document> updateCollection = MongoResource.getDataBase("ca").getCollection("update");
 
 	private static final String PDF_EXTENSION = ".pdf";
-	// private static final String DIR = System.getProperty("user.home") +
-	// File.separator + "CAs/";
-	private static final String DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
+	private static final String DIR = System.getProperty("user.home") + File.separator + "Documents" + File.separator
 			+ "CAs" + File.separator;
+	// private static final String DIR = "C:" + File.separator + "xampp" +
+	// File.separator + "htdocs" + File.separator
+	// + "CAs" + File.separator;
 
 	private static AtomicInteger number = new AtomicInteger(0);
 	private static Object[] updateList;
@@ -69,14 +71,15 @@ public class CAEPIDownloader extends Thread {
 	}
 
 	public static void crawlCAS() throws Exception {
-		Logger.info("Procedure started");
-		int threads = 8;
-		Logger.info("Running with {} threads", threads);
+		int threads = 6;
+		Logger.info("Procedure started. Running with {} threads", threads);
 
 		init();
 
-		updateList = updateCollection.find().projection(fields(include("number"), excludeId()))
+		updateList = updateCollection.find().projection(fields(include("number", "processNumber"), excludeId()))
 				.sort(ascending("number")).into(new ArrayList<Document>()).toArray();
+
+		Logger.info("Crawling {} CA", updateList.length);
 
 		List<CAEPIDownloader> list = new ArrayList<CAEPIDownloader>();
 
@@ -87,18 +90,24 @@ public class CAEPIDownloader extends Thread {
 		for (CAEPIDownloader a : list) {
 			Thread.sleep(1000);
 			a.start();
-			Logger.info("Procedure started");
 		}
 
 	}
 
 	@Override
 	public void run() {
+		Configurator.currentConfig().writer(new SharedFileWriter("log.txt", true)).activate();
+
 		while (number.get() < updateList.length) {
-			String caNumber = ((Document) updateList[number.getAndIncrement()]).getString("number");
+			String caNumber = "";
+			String processNumber = "";
+			synchronized (updateList) {
+				caNumber = ((Document) updateList[number.get()]).getString("number");
+				processNumber = ((Document) updateList[number.getAndIncrement()]).getString("processNumber");
+			}
 
 			WebClient webClient = initializeClient();
-			System.out.println("Downloading CA " + caNumber);
+			Logger.info("Downloading CA {}", caNumber);
 
 			try {
 				long beginCA = new Date().getTime();
@@ -130,9 +139,10 @@ public class CAEPIDownloader extends Thread {
 
 				HtmlInput details = null;
 				int tries = 30;
+				String xpath = ".//td[contains(.,'" + processNumber + "')]/following-sibling::td[3]/input";
 				while (tries > 0 && details == null) {
 					tries--;
-					details = (HtmlInput) page2.getElementById("PlaceHolderConteudo_grdListaResultado_btnDetalhar_0");
+					details = (HtmlInput) page2.getFirstByXPath(xpath);
 					synchronized (page2) {
 						page2.wait(1500);
 					}
@@ -165,7 +175,7 @@ public class CAEPIDownloader extends Thread {
 				InputStream is = pdf.getContentAsStream();
 				pdf.cleanUp();
 
-				saveAndImportCA(beginCA, caNumber, click, is);
+				readPDF(beginCA, caNumber, click, is);
 
 			} catch (Exception e) {
 				if (e instanceof CAEPINotFoundException && e.getMessage().equals("105")) {
@@ -185,7 +195,7 @@ public class CAEPIDownloader extends Thread {
 		Logger.info("Operarion finished, there are no CA's left in the list");
 	}
 
-	private static synchronized void saveAndImportCA(long beginCA, String number, Page click, InputStream is)
+	private static synchronized void readPDF(long beginCA, String number, Page click, InputStream is)
 			throws FileNotFoundException, IOException {
 		File file = new File(DIR + number + PDF_EXTENSION);
 
@@ -203,18 +213,29 @@ public class CAEPIDownloader extends Thread {
 			os.close();
 			is.close();
 			click.cleanUp();
-			Object[] fromPDF = extractDateFromPDF(file);
-			File newFileName = new File(DIR + number + fromPDF[1] + PDF_EXTENSION);
+			saveAndImportCA(beginCA, file);
+		}
+	}
+
+	public static synchronized void saveAndImportCA(long beginCA, File file) {
+		CA ca;
+		try {
+			ca = CAReader.readPDF(file.getAbsolutePath());
+			String number = ca.getNumber();
+			File newFileName = new File(DIR + number
+					+ "_" + (ca.getDate().contains("Condicionada")
+							? MaskTools.unMaskProcessNumber(ca.getProcessNumber()) : MaskTools.unMaskDate(ca.getDate()))
+					+ PDF_EXTENSION);
 			boolean renamed = file.renameTo(newFileName);
 			if (renamed) {
-				caCollection.insertOne(CAParser.toDocument((CA) fromPDF[0]).append("fileName", newFileName.getName()));
+				caCollection.insertOne(CAParser.toDocument(ca).append("fileName", newFileName.getName()));
 
 				caStatusCollection.updateOne(eq("number", number), combine(set("number", number), set("exist", true),
 						set("downloaded", true), set("imported", true)), new UpdateOptions().upsert(true));
 
 				updateCollection.deleteOne(eq("number", number));
 
-				Logger.info("CA {} encontrado e arquivado com o nome {}. Tempo de execução: {}", number, newFileName,
+				Logger.info("CA {} found and saved under the file {}. Execution time: {}", number, newFileName,
 						TimeTools.formatTime((int) ((new Date().getTime() - beginCA) / 1000)));
 
 			} else {
@@ -223,30 +244,13 @@ public class CAEPIDownloader extends Thread {
 
 				updateCollection.deleteOne(eq("number", number));
 
-				Logger.info("Não importado! CA {} encontrado e arquivado com o nome {}. Tempo de execução: {}", number,
+				Logger.info("Not imported! CA {} found and saved under the file {}. Execution time: {}", number,
 						newFileName, TimeTools.formatTime((int) ((new Date().getTime() - beginCA) / 1000)));
 			}
-		}
-	}
 
-	private static Object[] extractDateFromPDF(File file) {
-		Object[] objs = new Object[2];
-		String date = "";
-		String processNumber = "";
-		try {
-			CA ca = CAReader.readPDF(file.getAbsolutePath());
-			objs[0] = ca;
-			date = ca.getDate();
-			processNumber = ca.getProcessNumber();
 		} catch (Exception e) {
 			Logger.trace(e);
 		}
-
-		if (date.contains("Condicionada"))
-			objs[1] = "_" + MaskTools.unmasProcessNumber(processNumber);
-		else
-			objs[1] = "_" + date.replaceAll("/", "");
-		return objs;
 	}
 
 	private static void init() {
