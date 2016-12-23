@@ -36,11 +36,11 @@ import br.com.silva.tools.MaskTools;
 public class PDFImporter {
 
 	private static final String PDF_EXTENSION = ".pdf";
-	private static final String CA_FOLDER = System.getProperty("user.home") + File.separator + "Documents"
-			+ File.separator + "CAs" + File.separator;
-	// private static final String CA_FOLDER = "C:" + File.separator + "xampp" +
-	// File.separator + "htdocs" + File.separator
-	// + "CAs" + File.separator;
+	// private static final String CA_FOLDER = System.getProperty("user.home") +
+	// File.separator + "Documents"
+	// + File.separator + "CAs" + File.separator;
+	private static final String CA_FOLDER = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
+			+ "CAs" + File.separator;
 
 	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")
@@ -79,8 +79,8 @@ public class PDFImporter {
 			try {
 				CA ca = CAReader.readPDF(file);
 
-				caCollection.insertOne(
-						CAParser.toDocument(ca).append("fileName", file.replace(CA_FOLDER + File.separator, "")));
+				caCollection.insertOne(CAParser.toDocument(ca).append("fileName",
+						file.substring(file.lastIndexOf(File.separator) + 1, file.length())));
 
 				caStatusCollection
 						.updateOne(

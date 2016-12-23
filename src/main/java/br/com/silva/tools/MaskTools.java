@@ -8,6 +8,8 @@ public class MaskTools {
 	 * @return
 	 */
 	public static String maskProcessNumber(String processNumber) {
+		if (processNumber.length() == 15)
+			processNumber = "00" + processNumber;
 		return processNumber.substring(0, 5) + "." + processNumber.substring(5, 11) + "/"
 				+ processNumber.substring(11, 15) + "-" + processNumber.substring(15);
 	}

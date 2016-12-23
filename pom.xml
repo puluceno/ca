@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.silva</groupId>
 	<artifactId>ca</artifactId>
-	<version>0.9</version>
+	<version>1.0</version>
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>

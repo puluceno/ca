@@ -7,7 +7,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -76,6 +77,7 @@ public class FileImporter {
 		readFileAndInsert(fileLocation + "caepi.txt");
 		ParamsRepository.updateParams(new Date());
 
+		cleanUp();
 		Logger.info("Finished importing process. Elapsed time: {}", ((new Date().getTime() - begin) / 1000) + "s.");
 	}
 
@@ -91,12 +93,14 @@ public class FileImporter {
 
 			in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "ISO8859_1"));
 			String str;
-			List<Document> data = new ArrayList<Document>();
+			Set<Document> data = new HashSet<Document>();
 			Document query = new Document();
 			while ((str = in.readLine()) != null) {
 				if (!str.contains("#NRRegistroCA")) {
 					String[] split = str.split("\\|");
-					query.append("number", split[0]).append("date", split[1]);
+					query.append("number", split[0]);
+					if (split[1] != null && !split[1].isEmpty())
+						query.append("date", split[1]);
 					if (split[3] != null)
 						query.append("processNumber", MaskTools.maskProcessNumber(split[3]));
 					if (CARepository.findCA(query, "number") == null) {
@@ -107,11 +111,16 @@ public class FileImporter {
 			}
 			in.close();
 
-			UpdateRepository.insertList(data);
+			UpdateRepository.insertList(new ArrayList<Document>(data));
 			Logger.info("{} CAs added to update list", updateCollection.count());
 		} catch (Exception e) {
 			Logger.trace(e);
 		}
+	}
+
+	private static void cleanUp() {
+		new File(fileLocation + "caepi.zip").delete();
+		new File(fileLocation + "caepi.txt").delete();
 	}
 
 }
