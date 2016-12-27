@@ -20,7 +20,7 @@ import com.mongodb.client.MongoCollection;
 import br.com.silva.resources.MongoResource;
 
 public class CARepository {
-	private static MongoCollection<Document> caCollection = MongoResource.getCollection("ca", "ca");
+	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 
 	public static Document findCA(Document query, String... fields) {
 		Document ca;

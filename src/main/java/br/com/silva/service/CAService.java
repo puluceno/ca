@@ -13,6 +13,8 @@ import br.com.silva.business.FileImporter;
 import br.com.silva.business.PDFImporter;
 import br.com.silva.crawler.CAEPIDownloader;
 import br.com.silva.data.CARepository;
+import br.com.silva.data.EquipmentRepository;
+import br.com.silva.data.MaterialRepository;
 import br.com.silva.data.ParamsRepository;
 import br.com.silva.data.UpdateRepository;
 import br.com.silva.model.CAParser;
@@ -36,6 +38,14 @@ public class CAService {
 
 		get("/ca/count", (req, res) -> {
 			return CAParser.toJson(CARepository.count());
+		});
+
+		get("/equipment", (req, res) -> {
+			return CAParser.toJson(EquipmentRepository.findAll());
+		});
+
+		get("/material", (req, res) -> {
+			return CAParser.toJson(MaterialRepository.findAll());
 		});
 
 		post("/fileUrl", (req, res) -> {
@@ -65,8 +75,8 @@ public class CAService {
 	private static void init() {
 		clearLogs();
 		CorsFilter.apply();
-		PDFImporter.importAllPDF();
-		FileImporter.scheduleImport();
+		// PDFImporter.importAllPDF();
+		// FileImporter.scheduleImport();
 
 	}
 
