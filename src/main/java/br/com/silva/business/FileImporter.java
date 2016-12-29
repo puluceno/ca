@@ -71,9 +71,6 @@ public class FileImporter {
 
 		FileTools.unzipFile(fileLocation + "caepi.zip", fileLocation + "caepi.txt");
 		updateCollection.drop();
-		CARepository.createIndex("update", "number");
-		CARepository.createIndex("update", "processNumber");
-		CARepository.createCoumpoundIndex("update", "number", "processNumber");
 		readFileAndInsert(fileLocation + "caepi.txt");
 		ParamsRepository.updateParams(new Date());
 
@@ -119,8 +116,8 @@ public class FileImporter {
 	}
 
 	private static void cleanUp() {
-		new File(fileLocation + "caepi.zip").delete();
-		new File(fileLocation + "caepi.txt").delete();
+		FileTools.deleteFile(fileLocation + "caepi.zip");
+		FileTools.deleteFile(fileLocation + "caepi.txt");
 	}
 
 }

@@ -1,10 +1,14 @@
 package br.com.silva.service;
 
+import static spark.Spark.delete;
 import static spark.Spark.get;
+import static spark.Spark.options;
 import static spark.Spark.post;
 
 import java.util.Set;
 import java.util.logging.Level;
+
+import javax.servlet.MultipartConfigElement;
 
 import org.bson.Document;
 import org.pmw.tinylog.Logger;
@@ -13,12 +17,14 @@ import br.com.silva.business.FileImporter;
 import br.com.silva.business.PDFImporter;
 import br.com.silva.crawler.CAEPIDownloader;
 import br.com.silva.data.CARepository;
+import br.com.silva.data.DurabilityRepository;
 import br.com.silva.data.EquipmentRepository;
 import br.com.silva.data.MaterialRepository;
 import br.com.silva.data.ParamsRepository;
 import br.com.silva.data.UpdateRepository;
 import br.com.silva.model.CAParser;
 import br.com.silva.resources.CorsFilter;
+import br.com.silva.resources.MongoResource;
 
 public class CAService {
 
@@ -48,6 +54,10 @@ public class CAService {
 			return CAParser.toJson(MaterialRepository.findAll());
 		});
 
+		get("/durability", (req, res) -> {
+			return CAParser.toJson(DurabilityRepository.findAll());
+		});
+
 		post("/fileUrl", (req, res) -> {
 			String url = req.body();
 			if (url != null && !url.isEmpty())
@@ -68,6 +78,28 @@ public class CAService {
 			return PDFImporter.saveAndImportCA(req.body());
 		});
 
+		post("/durability", (req, res) -> {
+			req.attribute("org.eclipse.jetty.multipartConfig",
+					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
+
+			if (DurabilityRepository.readAndSave(req))
+				return CAParser.toJson(DurabilityRepository.findAll());
+			else
+				throw new Exception("error");
+
+		});
+
+		delete("/durability", (req, res) -> {
+			if (DurabilityRepository.delete(req.queryParams("id")))
+				return CAParser.toJson(DurabilityRepository.findAll());
+			else
+				throw new Exception("error");
+		});
+
+		options("/durability", (req, res) -> {
+			return res;
+		});
+
 		init();
 
 	}
@@ -75,6 +107,7 @@ public class CAService {
 	private static void init() {
 		clearLogs();
 		CorsFilter.apply();
+		MongoResource.generateIndexes();
 		// PDFImporter.importAllPDF();
 		// FileImporter.scheduleImport();
 

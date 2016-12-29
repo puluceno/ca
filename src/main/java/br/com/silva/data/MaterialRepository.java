@@ -1,5 +1,6 @@
 package br.com.silva.data;
 
+import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Sorts.ascending;
 
 import java.util.ArrayList;
@@ -16,7 +17,14 @@ public class MaterialRepository {
 			.getCollection("material");
 
 	public static List<Document> findAll() {
-		return materialCollection.find().sort(ascending("name")).into(new ArrayList<Document>());
+		return materialCollection.find().projection(excludeId()).sort(ascending("text"))
+				.into(new ArrayList<Document>());
+	}
+
+	public static void checkAndInsert(String materialText) {
+		Document query = new Document("text", materialText.toLowerCase());
+		if (materialCollection.find(query).first() == null)
+			materialCollection.insertOne(query);
 	}
 
 }

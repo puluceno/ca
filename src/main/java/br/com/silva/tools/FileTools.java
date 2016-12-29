@@ -5,6 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
+import javax.servlet.ServletException;
 
 import org.pmw.tinylog.Logger;
 
@@ -12,7 +17,14 @@ import com.github.junrar.Archive;
 import com.github.junrar.impl.FileVolumeManager;
 import com.github.junrar.rarfile.FileHeader;
 
+import spark.Request;
+
 public class FileTools {
+	// public static final String UPLOAD_DIR = "C:" + File.separator + "xampp"
+	// + File.separator + "htdocs"
+	// + File.separator + "files" + File.separator;
+	public static final String UPLOAD_DIR = System.getProperty("user.home") + File.separator + "Documents"
+			+ File.separator + "files" + File.separator;
 
 	/**
 	 * Unzips/unrar the source file and puts the extracted file in the given
@@ -68,5 +80,36 @@ public class FileTools {
 		fos.close();
 		in.close();
 		Logger.info("File downloaded from {} and saved in {}", url, filePathAndName);
+	}
+
+	/**
+	 * Saves an uploaded file to the hard drive.
+	 * 
+	 * @param req
+	 * @return true if success.
+	 */
+	public static boolean saveUploadedFile(Request req, String fileName) {
+		File uploadDir = new File(UPLOAD_DIR);
+		if (!uploadDir.exists())
+			uploadDir.mkdir();
+		Path tempFile = null;
+		try {
+			tempFile = Files.createTempFile(uploadDir.toPath(), "", "");
+		} catch (IOException e) {
+			Logger.trace(e);
+			return false;
+		}
+
+		try (InputStream input = req.raw().getPart("file").getInputStream()) {
+			Files.copy(input, tempFile, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException | ServletException e) {
+			Logger.trace(e);
+			return false;
+		}
+		return new File(tempFile.toString()).renameTo(new File(UPLOAD_DIR + fileName + ".pdf"));
+	}
+
+	public static boolean deleteFile(String fullFilePath) {
+		return new File(fullFilePath).delete();
 	}
 }

@@ -66,14 +66,6 @@ public class PDFImporter {
 			e.printStackTrace();
 		}
 
-		CARepository.createIndex("ca", "number");
-		CARepository.createIndex("ca", "date");
-		CARepository.createIndex("ca", "equipment");
-		CARepository.createIndex("ca", "processNumber");
-		CARepository.createCoumpoundIndex("ca", "number", "date");
-		CARepository.createCoumpoundIndex("ca", "number", "processNumber");
-		CARepository.createIndex("castatus", "number");
-
 		Logger.info("Importing {} CA into the database...", files.size());
 		for (String file : files) {
 			try {
