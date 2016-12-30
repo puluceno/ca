@@ -108,8 +108,8 @@ public class CAService {
 		clearLogs();
 		CorsFilter.apply();
 		MongoResource.generateIndexes();
-		// PDFImporter.importAllPDF();
-		// FileImporter.scheduleImport();
+		PDFImporter.importAllPDF();
+		FileImporter.scheduleImport();
 
 	}
 
