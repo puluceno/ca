@@ -89,6 +89,8 @@ public class PDFImporter {
 			}
 		}
 
+		CARepository.createEquipmentCollection();
+
 		Logger.info("Operation finished in " + (new Date().getTime() - beginCA) + "ms");
 	}
 

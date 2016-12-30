@@ -8,11 +8,13 @@ import static com.mongodb.client.model.Projections.include;
 import static com.mongodb.client.model.Sorts.ascending;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 
 import br.com.silva.resources.MongoResource;
@@ -52,5 +54,13 @@ public class CARepository {
 
 	public static int count() {
 		return (int) caCollection.count();
+	}
+
+	@SuppressWarnings("unused")
+	public static void createEquipmentCollection() {
+		AggregateIterable<Document> output = caCollection.aggregate(Arrays
+				.asList(new Document("$group", new Document("_id", "$equipment")), new Document("$out", "equipment")));
+		for (Document doc : output) {
+		}
 	}
 }
