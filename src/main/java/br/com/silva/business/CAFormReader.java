@@ -21,14 +21,14 @@ import br.com.silva.tools.MaskTools;
 import spark.Request;
 
 public class CAFormReader {
-	// public static final String UPLOAD_DIR = "C:" + File.separator + "xampp" +
-	// File.separator + "htdocs" + File.separator
-	// + "CAs" + File.separator;
-	public static final String UPLOAD_DIR = System.getProperty("user.home") + File.separator + "Documents"
-			+ File.separator + "CAs" + File.separator;
+	public static final String UPLOAD_DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
+			+ "CAs" + File.separator;
+	// public static final String UPLOAD_DIR = System.getProperty("user.home") +
+	// File.separator + "Documents"
+	// + File.separator + "CAs" + File.separator;
 	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
 	public static String readAndSave(Request req) {
 		try {
 			BufferedReader reader = new BufferedReader(
