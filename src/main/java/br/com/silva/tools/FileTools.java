@@ -22,6 +22,9 @@ import spark.Request;
 public class FileTools {
 	public static final String UPLOAD_DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
 			+ "files" + File.separator;
+	// public static final String CA_DIR = "C:" + File.separator + "xampp" +
+	// File.separator + "htdocs" + File.separator
+	// + "CAs" + File.separator;
 	// public static final String UPLOAD_DIR = System.getProperty("user.home") +
 	// File.separator + "Documents"
 	// + File.separator + "files" + File.separator;
@@ -88,8 +91,8 @@ public class FileTools {
 	 * @param req
 	 * @return true if success.
 	 */
-	public static boolean saveUploadedFile(Request req, String fileName) {
-		File uploadDir = new File(UPLOAD_DIR);
+	public static boolean saveUploadedFile(Request req, String fileName, String uploadDirectory) {
+		File uploadDir = new File(uploadDirectory);
 		if (!uploadDir.exists())
 			uploadDir.mkdir();
 		Path tempFile = null;
@@ -106,7 +109,7 @@ public class FileTools {
 			Logger.trace(e);
 			return false;
 		}
-		return new File(tempFile.toString()).renameTo(new File(UPLOAD_DIR + fileName + ".pdf"));
+		return new File(tempFile.toString()).renameTo(new File(uploadDirectory + fileName + ".pdf"));
 	}
 
 	public static boolean deleteFile(String fullFilePath) {

@@ -147,7 +147,7 @@ public class PDFImporter {
 		}
 	}
 
-	private static File readUploadedFile(String body) throws FileNotFoundException, IOException {
+	public static File readUploadedFile(String body) throws FileNotFoundException, IOException {
 		File file = new File(System.getProperty("java.io.tmpdir") + File.separator + "temp.pdf");
 		InputStream is = new ByteArrayInputStream(body.getBytes(StandardCharsets.ISO_8859_1));
 		OutputStream os = new FileOutputStream(file);

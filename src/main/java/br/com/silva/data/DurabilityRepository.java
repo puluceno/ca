@@ -8,6 +8,7 @@ import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import br.com.silva.tools.FileTools;
 import spark.Request;
 
 public class DurabilityRepository {
+	public static final String UPLOAD_DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
+			+ "files" + File.separator;
 
 	private static MongoCollection<Document> durabilityCollection = MongoResource.getDataBase("ca")
 			.getCollection("durability");
@@ -64,7 +67,7 @@ public class DurabilityRepository {
 			String submittedFileName = file.getSubmittedFileName();
 			Bson setFileName = null;
 			if (submittedFileName != null) {
-				FileTools.saveUploadedFile(req, fileName.toString().toLowerCase());
+				FileTools.saveUploadedFile(req, fileName.toString().toLowerCase(), UPLOAD_DIR);
 				setFileName = set("fileName", fileName.toString().toLowerCase() + ".pdf");
 			}
 			LinkedTreeMap _id = (LinkedTreeMap) durability.get("_id");

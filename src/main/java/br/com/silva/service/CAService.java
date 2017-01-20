@@ -13,6 +13,7 @@ import javax.servlet.MultipartConfigElement;
 import org.bson.Document;
 import org.pmw.tinylog.Logger;
 
+import br.com.silva.business.CAFormReader;
 import br.com.silva.business.FileImporter;
 import br.com.silva.business.PDFImporter;
 import br.com.silva.crawler.CAEPIDownloader;
@@ -24,7 +25,6 @@ import br.com.silva.data.ParamsRepository;
 import br.com.silva.data.UpdateRepository;
 import br.com.silva.model.CAParser;
 import br.com.silva.resources.CorsFilter;
-import br.com.silva.resources.MongoResource;
 
 public class CAService {
 
@@ -78,6 +78,17 @@ public class CAService {
 			return PDFImporter.saveAndImportCA(req.body());
 		});
 
+		post("/caform", (req, res) -> {
+			req.attribute("org.eclipse.jetty.multipartConfig",
+					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
+
+			return CAFormReader.readAndSave(req);
+		});
+
+		options("/caform", (req, res) -> {
+			return res;
+		});
+
 		post("/durability", (req, res) -> {
 			req.attribute("org.eclipse.jetty.multipartConfig",
 					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
@@ -107,9 +118,9 @@ public class CAService {
 	private static void init() {
 		clearLogs();
 		CorsFilter.apply();
-		MongoResource.generateIndexes();
-		PDFImporter.importAllPDF();
-		FileImporter.scheduleImport();
+		// MongoResource.generateIndexes();
+		// PDFImporter.importAllPDF();
+		// FileImporter.scheduleImport();
 
 	}
 
