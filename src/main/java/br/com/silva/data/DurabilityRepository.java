@@ -8,7 +8,6 @@ import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,13 +26,12 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 
+import br.com.silva.model.CAConstants;
 import br.com.silva.resources.MongoResource;
 import br.com.silva.tools.FileTools;
 import spark.Request;
 
 public class DurabilityRepository {
-	public static final String UPLOAD_DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
-			+ "files" + File.separator;
 
 	private static MongoCollection<Document> durabilityCollection = MongoResource.getDataBase("ca")
 			.getCollection("durability");
@@ -51,6 +49,7 @@ public class DurabilityRepository {
 
 			String equipment = durability.getString("equipment");
 			int days = durability.getDouble("days").intValue();
+			String type = durability.getString("type");
 
 			StringBuilder fileName = new StringBuilder(durability.getString("equipment").replaceAll(" ", "_"));
 
@@ -67,7 +66,7 @@ public class DurabilityRepository {
 			String submittedFileName = file.getSubmittedFileName();
 			Bson setFileName = null;
 			if (submittedFileName != null) {
-				FileTools.saveUploadedFile(req, fileName.toString().toLowerCase(), UPLOAD_DIR);
+				FileTools.saveUploadedFile(req, fileName.toString().toLowerCase(), CAConstants.FILES_DIR);
 				setFileName = set("fileName", fileName.toString().toLowerCase() + ".pdf");
 			}
 			LinkedTreeMap _id = (LinkedTreeMap) durability.get("_id");
@@ -82,10 +81,10 @@ public class DurabilityRepository {
 			Bson combine = null;
 			if (setFileName != null)
 				combine = combine(set("created", new Date()), set("equipment", equipment), set("material", materials),
-						set("days", days), setFileName);
+						set("days", days), set("type", type), setFileName);
 			else
 				combine = combine(set("created", new Date()), set("equipment", equipment), set("material", materials),
-						set("days", days));
+						set("days", days), set("type", type));
 
 			durabilityCollection.updateOne(eq("_id", id), combine, new UpdateOptions().upsert(true));
 			return true;
@@ -97,7 +96,7 @@ public class DurabilityRepository {
 	}
 
 	public static boolean delete(String id) {
-		FileTools.deleteFile(FileTools.UPLOAD_DIR + durabilityCollection.find(new Document("_id", new ObjectId(id)))
+		FileTools.deleteFile(CAConstants.FILES_DIR + durabilityCollection.find(new Document("_id", new ObjectId(id)))
 				.projection(fields(include("fileName"), excludeId())).first().getString("fileName"));
 		return durabilityCollection.deleteOne(new Document("_id", new ObjectId(id))).wasAcknowledged();
 	}

@@ -39,6 +39,13 @@ public class CARepository {
 			allCA.add(new Document("count", count()));
 			return allCA;
 		}
+		Boolean exactSearch = Boolean.valueOf(query.getString("exactSearch"));
+		if (exactSearch) {
+			query.remove("exactSearch");
+			ArrayList<Document> exact = caCollection.find(query).limit(100).into(new ArrayList<Document>());
+			exact.add(new Document("count", (int) caCollection.count(query)));
+			return exact;
+		}
 		List<Bson> regexes = new ArrayList<Bson>();
 
 		query.keySet().forEach(key -> {

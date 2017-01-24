@@ -1,7 +1,6 @@
 package br.com.silva.business;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -15,17 +14,13 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.mongodb.client.MongoCollection;
 
 import br.com.silva.data.CARepository;
+import br.com.silva.model.CAConstants;
 import br.com.silva.resources.MongoResource;
 import br.com.silva.tools.FileTools;
 import br.com.silva.tools.MaskTools;
 import spark.Request;
 
 public class CAFormReader {
-	public static final String UPLOAD_DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
-			+ "CAs" + File.separator;
-	// public static final String UPLOAD_DIR = System.getProperty("user.home") +
-	// File.separator + "Documents"
-	// + File.separator + "CAs" + File.separator;
 	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 
 	@SuppressWarnings("rawtypes")
@@ -70,7 +65,7 @@ public class CAFormReader {
 
 			String fileName = number + "_" + MaskTools.unMaskDate(ca.getString("date"));
 
-			FileTools.saveUploadedFile(req, fileName, UPLOAD_DIR);
+			FileTools.saveUploadedFile(req, fileName, CAConstants.CA_DIR);
 			ca.remove("file");
 			ca.append("fileName", fileName + ".pdf");
 			caCollection.insertOne(ca);

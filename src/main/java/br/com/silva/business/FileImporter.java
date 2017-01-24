@@ -23,6 +23,7 @@ import br.com.silva.crawler.CAEPIDownloader;
 import br.com.silva.data.CARepository;
 import br.com.silva.data.ParamsRepository;
 import br.com.silva.data.UpdateRepository;
+import br.com.silva.model.CAConstants;
 import br.com.silva.resources.MongoResource;
 import br.com.silva.tools.FileTools;
 import br.com.silva.tools.MaskTools;
@@ -39,8 +40,6 @@ public class FileImporter {
 		FileImporter.importCAList();
 	}
 
-	private static String fileLocation = System.getProperty("user.home") + File.separator + "Documents"
-			+ File.separator;
 	private static MongoCollection<Document> updateCollection = MongoResource.getDataBase("ca").getCollection("update");
 
 	public static void scheduleImport() {
@@ -63,15 +62,15 @@ public class FileImporter {
 		long begin = new Date().getTime();
 		try {
 			FileTools.downloadFile(new URL(ParamsRepository.findParams().getString("fileUrl")),
-					fileLocation + "caepi.zip");
+					CAConstants.HOME_DIR + "caepi.zip");
 		} catch (Exception e) {
 			Logger.error("File does not exist in the given location.");
 			Logger.trace(e);
 		}
 
-		FileTools.unzipFile(fileLocation + "caepi.zip", fileLocation + "caepi.txt");
+		FileTools.unzipFile(CAConstants.HOME_DIR + "caepi.zip", CAConstants.HOME_DIR + "caepi.txt");
 		updateCollection.drop();
-		readFileAndInsert(fileLocation + "caepi.txt");
+		readFileAndInsert(CAConstants.HOME_DIR + "caepi.txt");
 		ParamsRepository.updateParams(new Date());
 
 		cleanUp();
@@ -98,8 +97,9 @@ public class FileImporter {
 					query.append("number", split[0]);
 					if (split[1] != null && !split[1].isEmpty())
 						query.append("date", split[1]);
-					if (split[3] != null)
+					if (split[3] != null && split[3].length() > 14) {
 						query.append("processNumber", MaskTools.maskProcessNumber(split[3]));
+					}
 					if (CARepository.findCA(query, "number") == null) {
 						data.add(new Document("number", split[0]).append("processNumber", split[3]));
 					}
@@ -116,8 +116,8 @@ public class FileImporter {
 	}
 
 	private static void cleanUp() {
-		FileTools.deleteFile(fileLocation + "caepi.zip");
-		FileTools.deleteFile(fileLocation + "caepi.txt");
+		FileTools.deleteFile(CAConstants.HOME_DIR + "caepi.zip");
+		FileTools.deleteFile(CAConstants.HOME_DIR + "caepi.txt");
 	}
 
 }

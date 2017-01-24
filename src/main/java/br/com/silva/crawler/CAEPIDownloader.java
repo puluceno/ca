@@ -45,6 +45,7 @@ import br.com.silva.business.CAReader;
 import br.com.silva.data.CARepository;
 import br.com.silva.exceptions.CAEPINotFoundException;
 import br.com.silva.model.CA;
+import br.com.silva.model.CAConstants;
 import br.com.silva.model.CAParser;
 import br.com.silva.resources.MongoResource;
 import br.com.silva.tools.MaskTools;
@@ -56,13 +57,6 @@ public class CAEPIDownloader extends Thread {
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")
 			.getCollection("castatus");
 	private static MongoCollection<Document> updateCollection = MongoResource.getDataBase("ca").getCollection("update");
-
-	private static final String PDF_EXTENSION = ".pdf";
-	// private static final String DIR = System.getProperty("user.home") +
-	// File.separator + "Documents" + File.separator
-	// + "CAs" + File.separator;
-	private static final String DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
-			+ "CAs" + File.separator;
 
 	private static AtomicInteger number = new AtomicInteger(0);
 	private static Object[] updateList;
@@ -198,7 +192,7 @@ public class CAEPIDownloader extends Thread {
 
 	private static synchronized void readPDF(long beginCA, String number, Page click, InputStream is)
 			throws FileNotFoundException, IOException {
-		File file = new File(DIR + number + PDF_EXTENSION);
+		File file = new File(CAConstants.CA_DIR + number + CAConstants.PDF_EXTENSION);
 
 		OutputStream os = new FileOutputStream(file);
 		byte[] bytes = new byte[1024];
@@ -223,10 +217,10 @@ public class CAEPIDownloader extends Thread {
 		try {
 			ca = CAReader.readPDF(file.getAbsolutePath());
 			String number = ca.getNumber();
-			File newFileName = new File(DIR + number
+			File newFileName = new File(CAConstants.CA_DIR + number
 					+ "_" + (ca.getDate().contains("Condicionada")
 							? MaskTools.unMaskProcessNumber(ca.getProcessNumber()) : MaskTools.unMaskDate(ca.getDate()))
-					+ PDF_EXTENSION);
+					+ CAConstants.PDF_EXTENSION);
 			boolean renamed = file.renameTo(newFileName);
 			if (renamed) {
 				if (CARepository.findCA(new Document("number", ca.getNumber()).append("date", ca.getDate())
@@ -275,7 +269,7 @@ public class CAEPIDownloader extends Thread {
 		Configurator.defaultConfig()
 				.writer(new FileWriter(System.getProperty("user.home") + File.separator + "log.txt")).activate();
 
-		File directory = new File(DIR);
+		File directory = new File(CAConstants.CA_DIR);
 		if (!directory.exists())
 			directory.mkdirs();
 	}

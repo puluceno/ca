@@ -20,15 +20,6 @@ import com.github.junrar.rarfile.FileHeader;
 import spark.Request;
 
 public class FileTools {
-	public static final String UPLOAD_DIR = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
-			+ "files" + File.separator;
-	// public static final String CA_DIR = "C:" + File.separator + "xampp" +
-	// File.separator + "htdocs" + File.separator
-	// + "CAs" + File.separator;
-	// public static final String UPLOAD_DIR = System.getProperty("user.home") +
-	// File.separator + "Documents"
-	// + File.separator + "files" + File.separator;
-
 	/**
 	 * Unzips/unrar the source file and puts the extracted file in the given
 	 * path with the given file name

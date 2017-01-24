@@ -29,18 +29,12 @@ import com.mongodb.client.model.UpdateOptions;
 import br.com.silva.data.CARepository;
 import br.com.silva.exceptions.InvalidCAException;
 import br.com.silva.model.CA;
+import br.com.silva.model.CAConstants;
 import br.com.silva.model.CAParser;
 import br.com.silva.resources.MongoResource;
 import br.com.silva.tools.MaskTools;
 
 public class PDFImporter {
-
-	private static final String PDF_EXTENSION = ".pdf";
-	// private static final String CA_FOLDER = System.getProperty("user.home") +
-	// File.separator + "Documents"
-	// + File.separator + "CAs" + File.separator;
-	private static final String CA_FOLDER = "C:" + File.separator + "xampp" + File.separator + "htdocs" + File.separator
-			+ "CAs" + File.separator;
 
 	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
 	private static MongoCollection<Document> caStatusCollection = MongoResource.getDataBase("ca")
@@ -56,7 +50,7 @@ public class PDFImporter {
 		caStatusCollection.drop();
 		long beginCA = new Date().getTime();
 		Set<String> files = new HashSet<String>();
-		try (Stream<Path> paths = Files.walk(Paths.get(CA_FOLDER))) {
+		try (Stream<Path> paths = Files.walk(Paths.get(CAConstants.CA_DIR))) {
 			paths.forEach(filePath -> {
 				if (Files.isRegularFile(filePath)) {
 					files.add(filePath.toString());
@@ -81,7 +75,7 @@ public class PDFImporter {
 								new UpdateOptions().upsert(true));
 			} catch (Exception e) {
 				int end = file.indexOf("_") == -1 ? file.indexOf(".pdf") : file.indexOf("_");
-				int number = Integer.parseInt(file.substring(CA_FOLDER.length() + 1, end));
+				int number = Integer.parseInt(file.substring(CAConstants.CA_DIR.length() + 1, end));
 				caStatusCollection.updateOne(
 						eq("number", number), combine(set("number", number), set("exist", true),
 								set("downloaded", true), set("imported", false), set("retry", true)),
@@ -107,9 +101,9 @@ public class PDFImporter {
 
 			if (CARepository.findCA(new Document("number", number).append("date", ca.getDate()), "number") == null) {
 
-				File newFileName = new File(CA_FOLDER + number + "_" + (ca.getDate().contains("Condicionada")
+				File newFileName = new File(CAConstants.CA_DIR + number + "_" + (ca.getDate().contains("Condicionada")
 						? MaskTools.unMaskProcessNumber(ca.getProcessNumber()) : MaskTools.unMaskDate(ca.getDate()))
-						+ PDF_EXTENSION);
+						+ CAConstants.PDF_EXTENSION);
 				boolean renamed = file.renameTo(newFileName);
 
 				if (renamed) {
