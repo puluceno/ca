@@ -23,7 +23,7 @@ public class CAReader {
 	public static String LN = System.getProperty("line.separator");
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(readPDF("/home/pulu/Documents/CAs/10043_08082021.pdf"));
+		System.out.println(readPDF("/home/pulu/Documents/CAs/26158_19012022.pdf"));
 	}
 
 	public static CA readPDF(String pathToPDF) throws Exception {
@@ -197,7 +197,7 @@ public class CAReader {
 							}
 						}
 					} else if (hasSize && !done) {
-						references = page.substring(referenceIndex + 13, page.indexOf(LN + "Tamanhos:"));
+						references = page.substring(referenceIndex + 13, page.lastIndexOf(LN + "Tamanhos:"));
 						done = true;
 					} else if (hasColors && !done) {
 						references = page.substring(referenceIndex + 13, page.indexOf("Cores: ") - 1);

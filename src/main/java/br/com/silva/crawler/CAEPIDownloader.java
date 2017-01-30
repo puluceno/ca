@@ -23,10 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import org.bson.Document;
-import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
-import org.pmw.tinylog.writers.FileWriter;
-import org.pmw.tinylog.writers.SharedFileWriter;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -69,8 +66,6 @@ public class CAEPIDownloader extends Thread {
 		int threads = 6;
 		Logger.info("Procedure started. Running with {} threads", threads);
 
-		init();
-
 		updateList = updateCollection.find().projection(fields(include("number", "processNumber"), excludeId()))
 				.sort(ascending("number")).into(new ArrayList<Document>()).toArray();
 
@@ -91,8 +86,6 @@ public class CAEPIDownloader extends Thread {
 
 	@Override
 	public void run() {
-		Configurator.currentConfig().writer(new SharedFileWriter("log.txt", true)).activate();
-
 		while (number.get() < updateList.length) {
 			String caNumber = "";
 			String processNumber = "";
@@ -263,15 +256,6 @@ public class CAEPIDownloader extends Thread {
 		} catch (Exception e) {
 			Logger.trace(e);
 		}
-	}
-
-	private static void init() {
-		Configurator.defaultConfig()
-				.writer(new FileWriter(System.getProperty("user.home") + File.separator + "log.txt")).activate();
-
-		File directory = new File(CAConstants.CA_DIR);
-		if (!directory.exists())
-			directory.mkdirs();
 	}
 
 	private static WebClient initializeClient() {

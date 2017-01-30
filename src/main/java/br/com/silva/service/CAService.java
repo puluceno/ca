@@ -14,6 +14,7 @@ import org.bson.Document;
 import org.pmw.tinylog.Logger;
 
 import br.com.silva.business.CAFormReader;
+import br.com.silva.business.CAPrintReader;
 import br.com.silva.business.FileImporter;
 import br.com.silva.business.PDFImporter;
 import br.com.silva.crawler.CAEPIDownloader;
@@ -23,8 +24,10 @@ import br.com.silva.data.EquipmentRepository;
 import br.com.silva.data.MaterialRepository;
 import br.com.silva.data.ParamsRepository;
 import br.com.silva.data.UpdateRepository;
+import br.com.silva.model.CAConstants;
 import br.com.silva.model.CAParser;
 import br.com.silva.resources.CorsFilter;
+import br.com.silva.tools.FileTools;
 
 public class CAService {
 
@@ -76,6 +79,18 @@ public class CAService {
 
 		post("/ca", (req, res) -> {
 			return PDFImporter.saveAndImportCA(req.body());
+		});
+
+		post("caformfile", (req, res) -> {
+			req.attribute("org.eclipse.jetty.multipartConfig",
+					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
+
+			String fileName = "test";
+			FileTools.saveUploadedFile(req, fileName, CAConstants.CA_DIR);
+			Object ca = CAParser
+					.toJson(CAPrintReader.readPDF(CAConstants.CA_DIR + fileName + CAConstants.PDF_EXTENSION));
+			FileTools.deleteFile(CAConstants.CA_DIR + fileName + CAConstants.PDF_EXTENSION);
+			return ca;
 		});
 
 		post("/caform", (req, res) -> {

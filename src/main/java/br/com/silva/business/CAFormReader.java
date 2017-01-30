@@ -34,7 +34,8 @@ public class CAFormReader {
 			if (!number.matches("^[1-9]([0-9]{1,4}$)"))
 				throw new Exception("Número do CA inválido!");
 
-			if (CARepository.findCA(new Document("number", number)) != null)
+			if (CARepository.findCA(new Document("number", number).append("date", ca.getString("date"))
+					.append("approvedFor", ca.getString("approvedFor"))) != null)
 				throw new Exception("CA já existente no sistema!");
 
 			if (ca.containsKey("technicalRules")) {
