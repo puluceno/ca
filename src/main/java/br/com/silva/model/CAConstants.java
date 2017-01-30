@@ -15,6 +15,7 @@ public class CAConstants {
 
 	public static final String CA_DIR = File.separator + "var" + File.separator + "www" + File.separator + "html"
 			+ File.separator + "CAs" + File.separator;
+
 	// public static final String CA_DIR = System.getProperty("user.home") +
 	// File.separator + "Documents" + File.separator
 	// + "CAs" + File.separator;

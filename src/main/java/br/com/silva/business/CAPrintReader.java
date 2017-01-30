@@ -1,6 +1,8 @@
 package br.com.silva.business;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,6 +79,7 @@ public class CAPrintReader {
 				boolean hasART = page.contains(" ART:");
 				boolean hasReport = page.contains("Nº. do Laudo Laboratório Razão Social");
 				boolean hasTechRules = page.contains(LN + "Norma");
+				boolean hasAttenuationTable = page.contains("Tabela de Atenuação");
 
 				if (hasNumber) {
 					String number = page
@@ -227,6 +230,21 @@ public class CAPrintReader {
 								page.lastIndexOf(LN + "http://www3.mte.gov.br"));
 					String[] techRulesArray = removeNewLine(techRules).split(LN);
 					ca.setTechnicalRules(Arrays.asList(techRulesArray));
+				}
+
+				if (hasAttenuationTable) {
+					Map<String, String[]> attenuationTable = new HashMap<String, String[]>();
+
+					String[] dbs = page
+							.substring(page.indexOf("Atenuação db:") + 13, page.indexOf("Desvio Padrão:") - 1)
+							.split(" ", 10);
+
+					String[] devs = page.substring(page.indexOf("Desvio Padrão:") + 14, page.lastIndexOf(LN)).split(" ",
+							10);
+
+					attenuationTable.put("dbAttenuations", dbs);
+					attenuationTable.put("deviations", devs);
+					ca.setAttenuationTable(attenuationTable);
 				}
 
 			}
