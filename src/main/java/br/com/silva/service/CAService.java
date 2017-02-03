@@ -1,5 +1,6 @@
 package br.com.silva.service;
 
+import static spark.Spark.after;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.options;
@@ -23,7 +24,9 @@ import br.com.silva.data.DurabilityRepository;
 import br.com.silva.data.EquipmentRepository;
 import br.com.silva.data.MaterialRepository;
 import br.com.silva.data.ParamsRepository;
+import br.com.silva.data.ProfileRepository;
 import br.com.silva.data.UpdateRepository;
+import br.com.silva.data.UserRepository;
 import br.com.silva.model.CAConstants;
 import br.com.silva.model.CAParser;
 import br.com.silva.resources.CorsFilter;
@@ -32,6 +35,8 @@ import br.com.silva.tools.FileTools;
 public class CAService {
 
 	public static void main(String[] args) {
+		// staticFileLocation("/caClient");
+		// staticFiles.expireTime(86400);
 
 		get("/ca", (req, res) -> {
 			Set<String> queryParams = req.queryParams();
@@ -59,6 +64,14 @@ public class CAService {
 
 		get("/durability", (req, res) -> {
 			return CAParser.toJson(DurabilityRepository.findAll());
+		});
+
+		get("/profile", (req, res) -> {
+			return CAParser.toJson(ProfileRepository.findAll());
+		});
+
+		get("/user", (req, res) -> {
+			return CAParser.toJson(UserRepository.findAll());
 		});
 
 		post("/fileUrl", (req, res) -> {
@@ -100,10 +113,6 @@ public class CAService {
 			return CAFormReader.readAndSave(req);
 		});
 
-		options("/caform", (req, res) -> {
-			return res;
-		});
-
 		post("/durability", (req, res) -> {
 			req.attribute("org.eclipse.jetty.multipartConfig",
 					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
@@ -115,6 +124,16 @@ public class CAService {
 
 		});
 
+		post("/user", (req, res) -> {
+			req.attribute("org.eclipse.jetty.multipartConfig",
+					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
+
+			if (UserRepository.save(req))
+				return CAParser.toJson(UserRepository.findAll());
+			else
+				throw new Exception("error");
+		});
+
 		delete("/durability", (req, res) -> {
 			if (DurabilityRepository.delete(req.queryParams("id")))
 				return CAParser.toJson(DurabilityRepository.findAll());
@@ -122,8 +141,27 @@ public class CAService {
 				throw new Exception("error");
 		});
 
+		delete("/user", (req, res) -> {
+			if (UserRepository.delete(req.queryParams("id")))
+				return CAParser.toJson(UserRepository.findAll());
+			else
+				throw new Exception("error");
+		});
+
+		options("/caform", (req, res) -> {
+			return res;
+		});
+
 		options("/durability", (req, res) -> {
 			return res;
+		});
+
+		options("/user", (req, res) -> {
+			return res;
+		});
+
+		after((request, response) -> {
+			response.header("Content-Encoding", "gzip");
 		});
 
 		init();
