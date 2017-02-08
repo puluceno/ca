@@ -63,7 +63,7 @@ public class CAEPIDownloader extends Thread {
 	}
 
 	public static void crawlCAS() throws Exception {
-		int threads = 6;
+		int threads = 2;
 		Logger.info("Procedure started. Running with {} threads", threads);
 
 		updateList = updateCollection.find().projection(fields(include("number", "processNumber"), excludeId()))

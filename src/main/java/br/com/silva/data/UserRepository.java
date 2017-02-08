@@ -1,6 +1,7 @@
 package br.com.silva.data;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
@@ -24,6 +25,10 @@ import spark.Request;
 
 public class UserRepository {
 	private static MongoCollection<Document> userCollection = MongoResource.getDataBase("ca").getCollection("user");
+
+	public static Document findUserByLogin(Document query) {
+		return userCollection.find(query).projection(excludeId()).first();
+	}
 
 	public static List<Document> findAll() {
 		return userCollection.find().into(new ArrayList<Document>());

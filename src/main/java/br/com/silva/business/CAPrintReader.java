@@ -235,12 +235,22 @@ public class CAPrintReader {
 				if (hasAttenuationTable) {
 					Map<String, String[]> attenuationTable = new HashMap<String, String[]>();
 
-					String[] dbs = page
+					String[] dbs = new String[10];
+					Arrays.fill(dbs, 0, dbs.length, "");
+
+					String[] dbsTempdbs = page
 							.substring(page.indexOf("Atenuação db:") + 13, page.indexOf("Desvio Padrão:") - 1)
 							.split(" ", 10);
+					System.arraycopy(dbsTempdbs, 0, dbs, 0, dbsTempdbs.length);
 
-					String[] devs = page.substring(page.indexOf("Desvio Padrão:") + 14, page.lastIndexOf(LN)).split(" ",
-							10);
+					String[] devs = new String[10];
+					Arrays.fill(devs, 0, devs.length, "");
+					String[] devsTemp = page.substring(page.indexOf("Desvio Padrão:") + 14, page.lastIndexOf(LN))
+							.split(" ", 10);
+					System.arraycopy(devs, 0, devs, 0, devsTemp.length);
+
+					dbsTempdbs = null;
+					devsTemp = null;
 
 					attenuationTable.put("dbAttenuations", dbs);
 					attenuationTable.put("deviations", devs);

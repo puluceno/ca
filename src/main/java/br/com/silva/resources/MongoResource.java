@@ -77,5 +77,11 @@ public class MongoResource {
 		createIndex("durability", "days");
 		createCoumpoundIndex("durability", "equipment", "material");
 		createCoumpoundIndex("durability", "equipment", "material", "days");
+
+		createIndex("login", "login");
+		createIndex("login", "session");
+		createIndex("login", "token");
+		createCoumpoundIndex("login", "login", "token");
+
 	}
 }

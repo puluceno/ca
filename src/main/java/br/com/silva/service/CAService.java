@@ -17,6 +17,7 @@ import org.pmw.tinylog.Logger;
 import br.com.silva.business.CAFormReader;
 import br.com.silva.business.CAPrintReader;
 import br.com.silva.business.FileImporter;
+import br.com.silva.business.LoginBusiness;
 import br.com.silva.business.PDFImporter;
 import br.com.silva.crawler.CAEPIDownloader;
 import br.com.silva.data.CARepository;
@@ -29,6 +30,7 @@ import br.com.silva.data.UpdateRepository;
 import br.com.silva.data.UserRepository;
 import br.com.silva.model.CAConstants;
 import br.com.silva.model.CAParser;
+import br.com.silva.model.Messages;
 import br.com.silva.resources.CorsFilter;
 import br.com.silva.tools.FileTools;
 
@@ -131,7 +133,14 @@ public class CAService {
 			if (UserRepository.save(req))
 				return CAParser.toJson(UserRepository.findAll());
 			else
-				throw new Exception("error");
+				return Messages.USER_ALREADY_EXISTS;
+		});
+
+		post("/login", (req, res) -> {
+			req.attribute("org.eclipse.jetty.multipartConfig",
+					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
+
+			return CAParser.toJson(LoginBusiness.doLogin(req));
 		});
 
 		delete("/durability", (req, res) -> {
@@ -172,6 +181,8 @@ public class CAService {
 		clearLogs();
 		CorsFilter.apply();
 		// MongoResource.generateIndexes();
+		// TODO: verify the methods below, if the database is consistent, do not
+		// drop anything
 		// PDFImporter.importAllPDF();
 		// FileImporter.scheduleImport();
 
