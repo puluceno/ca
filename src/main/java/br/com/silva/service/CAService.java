@@ -136,6 +136,12 @@ public class CAService {
 				return Messages.USER_ALREADY_EXISTS;
 		});
 
+		post("/user/password", (req, res) -> {
+			System.out.println(req.body());
+			req.headers().forEach(h -> System.out.println(h));
+			return res;
+		});
+
 		post("/login", (req, res) -> {
 			req.attribute("org.eclipse.jetty.multipartConfig",
 					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
@@ -166,6 +172,9 @@ public class CAService {
 		});
 
 		options("/user", (req, res) -> {
+			return res;
+		});
+		options("/*", (req, res) -> {
 			return res;
 		});
 
