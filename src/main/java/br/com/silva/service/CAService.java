@@ -29,7 +29,7 @@ import br.com.silva.data.ProfileRepository;
 import br.com.silva.data.UpdateRepository;
 import br.com.silva.data.UserRepository;
 import br.com.silva.model.CAConstants;
-import br.com.silva.model.CAParser;
+import br.com.silva.model.JsonTransformer;
 import br.com.silva.model.Messages;
 import br.com.silva.resources.CorsFilter;
 import br.com.silva.tools.FileTools;
@@ -40,40 +40,56 @@ public class CAService {
 		// staticFileLocation("/caClient");
 		// staticFiles.expireTime(86400);
 
+		// before("/*", (req, res) -> {
+		// String path = req.pathInfo();
+		// if (!path.equals("/login"))
+		// if (!LoginBusiness.isAuthenticated(req))
+		// halt(401, "É necessário realizar Login!");
+		// });
+
+		get("/login", (req, res) -> {
+			System.out.println("login TEST");
+			return req;
+		});
+
 		get("/ca", (req, res) -> {
 			Set<String> queryParams = req.queryParams();
 			Document query = new Document();
 			queryParams.forEach(param -> query.append(param, req.queryParams(param)));
 
-			return CAParser.toJson(CARepository.findCAList(query));
+			return JsonTransformer.toJson(CARepository.findCAList(query));
 		});
 
 		get("/params", (req, res) -> {
-			return CAParser.toJson(ParamsRepository.findParams());
+			return JsonTransformer.toJson(ParamsRepository.findParams());
 		});
 
 		get("/ca/count", (req, res) -> {
-			return CAParser.toJson(CARepository.count());
+			return JsonTransformer.toJson(CARepository.count());
 		});
 
 		get("/equipment", (req, res) -> {
-			return CAParser.toJson(EquipmentRepository.findAll());
+			return JsonTransformer.toJson(EquipmentRepository.findAll());
 		});
 
 		get("/material", (req, res) -> {
-			return CAParser.toJson(MaterialRepository.findAll());
+			return JsonTransformer.toJson(MaterialRepository.findAll());
 		});
 
 		get("/durability", (req, res) -> {
-			return CAParser.toJson(DurabilityRepository.findAll());
+			return JsonTransformer.toJson(DurabilityRepository.findAll());
 		});
 
 		get("/profile", (req, res) -> {
-			return CAParser.toJson(ProfileRepository.findAll());
+			return JsonTransformer.toJson(ProfileRepository.findAll());
 		});
 
 		get("/user", (req, res) -> {
-			return CAParser.toJson(UserRepository.findAll());
+			return JsonTransformer.toJson(UserRepository.findAll());
+		});
+
+		get("/user/info", (req, res) -> {
+			return JsonTransformer.toJson(LoginBusiness.findUser(req));
 		});
 
 		post("/fileUrl", (req, res) -> {
@@ -83,13 +99,13 @@ public class CAService {
 			else
 				Logger.error("File url is not valid: {}", url);
 
-			return CAParser.toJson(ParamsRepository.findParams());
+			return JsonTransformer.toJson(ParamsRepository.findParams());
 		});
 
 		post("/updateDatabase", (req, res) -> {
 			FileImporter.importCAList();
 			CAEPIDownloader.crawlCAS();
-			return CAParser.toJson(ParamsRepository.findParams().append("updateCount", UpdateRepository.count()));
+			return JsonTransformer.toJson(ParamsRepository.findParams().append("updateCount", UpdateRepository.count()));
 		});
 
 		post("/ca", (req, res) -> {
@@ -102,7 +118,7 @@ public class CAService {
 
 			String fileName = "test";
 			FileTools.saveUploadedFile(req, fileName, CAConstants.CA_DIR);
-			Object ca = CAParser
+			Object ca = JsonTransformer
 					.toJson(CAPrintReader.readPDF(CAConstants.CA_DIR + fileName + CAConstants.PDF_EXTENSION));
 			FileTools.deleteFile(CAConstants.CA_DIR + fileName + CAConstants.PDF_EXTENSION);
 			return ca;
@@ -120,7 +136,7 @@ public class CAService {
 					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
 
 			if (DurabilityRepository.readAndSave(req))
-				return CAParser.toJson(DurabilityRepository.findAll());
+				return JsonTransformer.toJson(DurabilityRepository.findAll());
 			else
 				throw new Exception("error");
 
@@ -131,7 +147,7 @@ public class CAService {
 					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
 
 			if (UserRepository.save(req))
-				return CAParser.toJson(UserRepository.findAll());
+				return JsonTransformer.toJson(UserRepository.findAll());
 			else
 				return Messages.USER_ALREADY_EXISTS;
 		});
@@ -146,19 +162,19 @@ public class CAService {
 			req.attribute("org.eclipse.jetty.multipartConfig",
 					new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
 
-			return CAParser.toJson(LoginBusiness.doLogin(req));
+			return JsonTransformer.toJson(LoginBusiness.doLogin(req));
 		});
 
 		delete("/durability", (req, res) -> {
 			if (DurabilityRepository.delete(req.queryParams("id")))
-				return CAParser.toJson(DurabilityRepository.findAll());
+				return JsonTransformer.toJson(DurabilityRepository.findAll());
 			else
 				throw new Exception("error");
 		});
 
 		delete("/user", (req, res) -> {
 			if (UserRepository.delete(req.queryParams("id")))
-				return CAParser.toJson(UserRepository.findAll());
+				return JsonTransformer.toJson(UserRepository.findAll());
 			else
 				throw new Exception("error");
 		});

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -43,6 +44,27 @@ public class LoginBusiness {
 		}
 	}
 
+	public static boolean isAuthenticated(Request req) {
+		String reqToken = req.headers("token");
+		if (reqToken == null || reqToken.equals(""))
+			return false;
+
+		List<Document> logins = LoginRepository.find(new Document("token", reqToken));
+		if (logins.isEmpty())
+			return false;
+
+		for (Document login : logins) {
+			if (login.getString("token").equals(reqToken) && login.getBoolean("valid").equals(Boolean.TRUE))
+				return true;
+		}
+		return false;
+	}
+
+	public static Document findUser(Request req) {
+		Document loginInfo = LoginRepository.findLastByToken(req.headers("token"));
+		return UserRepository.findUserByLogin(new Document("login", loginInfo.getString("login")), "password");
+	}
+
 	private static Document createNewSession(Document user) {
 		destroyUserSessions(user);
 		Document session = new Document("token", generateToken(user.getString("login"), user.getString("password")))
@@ -66,4 +88,5 @@ public class LoginBusiness {
 	private static void destroyUserSessions(Document user) {
 		LoginRepository.clearUserSessions(user);
 	}
+
 }

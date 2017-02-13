@@ -43,7 +43,7 @@ import br.com.silva.data.CARepository;
 import br.com.silva.exceptions.CAEPINotFoundException;
 import br.com.silva.model.CA;
 import br.com.silva.model.CAConstants;
-import br.com.silva.model.CAParser;
+import br.com.silva.model.JsonTransformer;
 import br.com.silva.resources.MongoResource;
 import br.com.silva.tools.MaskTools;
 import br.com.silva.tools.TimeTools;
@@ -218,7 +218,7 @@ public class CAEPIDownloader extends Thread {
 			if (renamed) {
 				if (CARepository.findCA(new Document("number", ca.getNumber()).append("date", ca.getDate())
 						.append("processNumber", ca.getProcessNumber()), "number") == null) {
-					caCollection.insertOne(CAParser.toDocument(ca).append("fileName", newFileName.getName()));
+					caCollection.insertOne(JsonTransformer.toDocument(ca).append("fileName", newFileName.getName()));
 
 					caStatusCollection
 							.updateOne(

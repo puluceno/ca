@@ -1,6 +1,7 @@
 package br.com.silva.data;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Sorts.ascending;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,10 @@ public class LoginRepository {
 
 	public static List<Document> find(Document query) {
 		return loginCollection.find(query).into(new ArrayList<Document>());
+	}
+
+	public static Document findLastByToken(String token) {
+		return loginCollection.find(new Document("token", token)).sort(ascending("time")).first();
 	}
 
 	public static void createSession(Document session) {

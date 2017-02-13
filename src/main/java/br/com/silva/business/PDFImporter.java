@@ -30,7 +30,7 @@ import br.com.silva.data.CARepository;
 import br.com.silva.exceptions.InvalidCAException;
 import br.com.silva.model.CA;
 import br.com.silva.model.CAConstants;
-import br.com.silva.model.CAParser;
+import br.com.silva.model.JsonTransformer;
 import br.com.silva.resources.MongoResource;
 import br.com.silva.tools.MaskTools;
 
@@ -65,7 +65,7 @@ public class PDFImporter {
 			try {
 				CA ca = CAReader.readPDF(file);
 
-				caCollection.insertOne(CAParser.toDocument(ca).append("fileName",
+				caCollection.insertOne(JsonTransformer.toDocument(ca).append("fileName",
 						file.substring(file.lastIndexOf(File.separator) + 1, file.length())));
 
 				caStatusCollection
@@ -107,7 +107,7 @@ public class PDFImporter {
 				boolean renamed = file.renameTo(newFileName);
 
 				if (renamed) {
-					caCollection.insertOne(CAParser.toDocument(ca).append("fileName", newFileName.getName()));
+					caCollection.insertOne(JsonTransformer.toDocument(ca).append("fileName", newFileName.getName()));
 
 					caStatusCollection
 							.updateOne(

@@ -12,7 +12,7 @@ import com.google.gson.JsonParser;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
-public class CAParser {
+public class JsonTransformer {
 	private static Gson gson = new Gson();
 	private static JsonParser parser = new JsonParser();
 
