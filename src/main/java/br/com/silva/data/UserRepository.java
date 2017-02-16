@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.google.gson.Gson;
@@ -31,7 +32,6 @@ public class UserRepository {
 	public static Document findUserByLogin(Document query, String... exclude) {
 		List<String> excludeFields = new ArrayList<String>(
 				Arrays.asList(Optional.ofNullable(exclude).orElse(new String[1])));
-		excludeFields.add("_id");
 		return userCollection.find(query).projection(exclude(excludeFields)).first();
 	}
 
@@ -40,7 +40,7 @@ public class UserRepository {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static boolean save(Request req) {
+	public static boolean createAndUpdate(Request req) {
 		try {
 			BufferedReader reader = new BufferedReader(
 					new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8));
@@ -64,6 +64,16 @@ public class UserRepository {
 			return false;
 		}
 		return true;
+	}
+
+	public static boolean update(ObjectId _id, Document updatedFields) {
+		List<Bson> updates = new ArrayList<Bson>();
+		updatedFields.keySet().forEach(key -> {
+			updates.add(set(key, updatedFields.get(key)));
+		});
+
+		return userCollection.updateOne(eq("_id", _id), combine(updates), new UpdateOptions().upsert(false))
+				.wasAcknowledged();
 	}
 
 	public static boolean delete(String id) {

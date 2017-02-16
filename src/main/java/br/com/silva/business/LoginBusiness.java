@@ -60,11 +60,6 @@ public class LoginBusiness {
 		return false;
 	}
 
-	public static Document findUser(Request req) {
-		Document loginInfo = LoginRepository.findLastByToken(req.headers("token"));
-		return UserRepository.findUserByLogin(new Document("login", loginInfo.getString("login")), "password");
-	}
-
 	private static Document createNewSession(Document user) {
 		destroyUserSessions(user);
 		Document session = new Document("token", generateToken(user.getString("login"), user.getString("password")))
