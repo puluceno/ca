@@ -119,7 +119,7 @@ public class CAService {
 				return PDFImporter.saveAndImportCA(req.body());
 			});
 
-			post("caformfile", (req, res) -> {
+			post("/caformfile", (req, res) -> {
 				req.attribute("org.eclipse.jetty.multipartConfig",
 						new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
 

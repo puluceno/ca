@@ -1,5 +1,7 @@
 package br.com.silva.data;
 
+import static com.mongodb.client.model.Sorts.ascending;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,6 @@ public class ProfileRepository {
 			.getCollection("profile");
 
 	public static List<Document> findAll() {
-		return profileCollection.find().into(new ArrayList<Document>());
+		return profileCollection.find().sort(ascending("profile")).into(new ArrayList<Document>());
 	}
 }

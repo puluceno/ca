@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
-import org.pmw.tinylog.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
@@ -75,7 +74,6 @@ public class CAFormReader {
 		} catch (Exception e) {
 			if (e instanceof NullPointerException)
 				return "CA não possui dados suficientes!";
-			Logger.trace(e);
 			return e.getMessage();
 		}
 
