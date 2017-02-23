@@ -28,9 +28,9 @@ public class CAReader {
 
 	public static CA readPDF(String pathToPDF) throws Exception {
 		CA ca = new CA();
-
+		PdfReader reader = null;
 		try {
-			PdfReader reader = new PdfReader(pathToPDF);
+			reader = new PdfReader(pathToPDF);
 			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
 				String page = PdfTextExtractor.getTextFromPage(reader, i);
 
@@ -379,6 +379,8 @@ public class CAReader {
 			if (e instanceof InvalidPdfException || e instanceof InvalidCAException)
 				throw e;
 			Logger.trace(e, "CA file " + pathToPDF);
+		} finally {
+			reader.close();
 		}
 		return ca;
 	}

@@ -41,9 +41,9 @@ public class UserRepository {
 
 	@SuppressWarnings("rawtypes")
 	public static boolean createAndUpdate(Request req) {
-		try {
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8));
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8))) {
+
 			Document user = new Gson().fromJson(reader, Document.class).append("created", new Date());
 
 			LinkedTreeMap _id = (LinkedTreeMap) user.get("_id");

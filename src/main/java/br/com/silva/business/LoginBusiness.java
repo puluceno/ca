@@ -22,10 +22,9 @@ import spark.Request;
 public class LoginBusiness {
 
 	public static Object doLogin(Request req) {
-		BufferedReader reader;
-		try {
-			reader = new BufferedReader(
-					new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8));
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8))) {
+
 			Document loginInfo = new Gson().fromJson(reader, Document.class);
 
 			Document loginQuery = new Document("login", loginInfo.getString("login"));

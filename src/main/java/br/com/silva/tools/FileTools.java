@@ -44,6 +44,7 @@ public class FileTools {
 					FileOutputStream os = new FileOutputStream(out);
 					a.extractFile(fh, os);
 					os.close();
+					a.close();
 					Logger.info("File unzipped sucesfully to {}", destinationFile);
 				} catch (Exception e) {
 					Logger.trace(e);

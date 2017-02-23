@@ -83,11 +83,9 @@ public class FileImporter {
 	 */
 	public static void readFileAndInsert(String fileName) {
 		Logger.info("Reading file {}", fileName);
-		BufferedReader in = null;
-		try {
-			File fileDir = new File(fileName);
+		try (BufferedReader in = new BufferedReader(
+				new InputStreamReader(new FileInputStream(new File(fileName)), "ISO8859_1"))) {
 
-			in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "ISO8859_1"));
 			String str;
 			Set<Document> data = new HashSet<Document>();
 			Document query = new Document();
@@ -106,7 +104,6 @@ public class FileImporter {
 				}
 				query.clear();
 			}
-			in.close();
 
 			UpdateRepository.insertList(new ArrayList<Document>(data));
 			Logger.info("{} CAs added to update list", updateCollection.count());

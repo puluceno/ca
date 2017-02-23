@@ -18,6 +18,7 @@ import org.bson.Document;
 import org.eclipse.jetty.http.HttpMethod;
 import org.pmw.tinylog.Logger;
 
+import br.com.silva.business.AnalysisBusiness;
 import br.com.silva.business.CAFormReader;
 import br.com.silva.business.CAPrintReader;
 import br.com.silva.business.FileImporter;
@@ -163,6 +164,18 @@ public class CAService {
 				return UserBusiness.changePassword(req, req.body());
 			});
 
+			post("/analysis", (req, res) -> {
+				req.attribute("org.eclipse.jetty.multipartConfig",
+						new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
+
+				Messages verifyAnalysis = AnalysisBusiness.verifyAnalysis(req);
+				System.out.println(verifyAnalysis);
+				if (verifyAnalysis != null) {
+					res.status(401);
+				}
+				return JsonTransformer.toJson(verifyAnalysis);
+			});
+
 			delete("/durability", (req, res) -> {
 				if (DurabilityRepository.delete(req.queryParams("id")))
 					return JsonTransformer.toJson(DurabilityRepository.findAll());
@@ -173,6 +186,13 @@ public class CAService {
 			delete("/user", (req, res) -> {
 				if (UserRepository.delete(req.queryParams("id")))
 					return JsonTransformer.toJson(UserRepository.findAll());
+				else
+					throw new Exception("error");
+			});
+
+			delete("/ca", (req, res) -> {
+				if (CARepository.delete(req.queryParams("id")))
+					return res;
 				else
 					throw new Exception("error");
 			});

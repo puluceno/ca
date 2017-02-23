@@ -24,9 +24,9 @@ public class CAFormReader {
 
 	@SuppressWarnings("rawtypes")
 	public static String readAndSave(Request req) {
-		try {
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8));
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8))) {
+
 			Document ca = new Gson().fromJson(reader, Document.class);
 
 			String number = String.valueOf(((Double) ca.get("number")).intValue());

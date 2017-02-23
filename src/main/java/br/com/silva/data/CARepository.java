@@ -13,11 +13,14 @@ import java.util.List;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 
+import br.com.silva.model.CAConstants;
 import br.com.silva.resources.MongoResource;
+import br.com.silva.tools.FileTools;
 
 public class CARepository {
 	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
@@ -42,7 +45,7 @@ public class CARepository {
 		Boolean exactSearch = Boolean.valueOf(query.getString("exactSearch"));
 		if (exactSearch) {
 			query.remove("exactSearch");
-			ArrayList<Document> exact = caCollection.find(query).limit(100).into(new ArrayList<Document>());
+			ArrayList<Document> exact = caCollection.find(query).into(new ArrayList<Document>());
 			exact.add(new Document("count", (int) caCollection.count(query)));
 			return exact;
 		}
@@ -53,7 +56,7 @@ public class CARepository {
 			regexes.add(regex(key, query.getString(key), "i"));
 		});
 
-		ArrayList<Document> cas = caCollection.find(and(regexes)).limit(100).sort(ascending("number"))
+		ArrayList<Document> cas = caCollection.find(and(regexes)).sort(ascending("number"))
 				.into(new ArrayList<Document>());
 		cas.add(new Document("count", (int) caCollection.count(and(regexes))));
 		return cas;
@@ -69,5 +72,11 @@ public class CARepository {
 				.asList(new Document("$group", new Document("_id", "$equipment")), new Document("$out", "equipment")));
 		for (Document doc : output) {
 		}
+	}
+
+	public static boolean delete(String id) {
+		FileTools.deleteFile(CAConstants.CA_DIR + caCollection.find(new Document("_id", new ObjectId(id)))
+				.projection(fields(include("fileName"), excludeId())).first().getString("fileName"));
+		return caCollection.deleteOne(new Document("_id", new ObjectId(id))).wasAcknowledged();
 	}
 }

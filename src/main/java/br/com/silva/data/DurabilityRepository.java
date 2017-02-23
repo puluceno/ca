@@ -42,9 +42,9 @@ public class DurabilityRepository {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static boolean readAndSave(Request req) {
-		try {
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8));
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(req.raw().getPart("data").getInputStream(), StandardCharsets.UTF_8))) {
+
 			Document durability = new Gson().fromJson(reader, Document.class);
 
 			String equipment = durability.getString("equipment");

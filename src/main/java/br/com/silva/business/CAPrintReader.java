@@ -50,9 +50,9 @@ public class CAPrintReader {
 
 	public static CA readPDF(String pathToPDF) throws Exception {
 		CA ca = new CA();
-
+		PdfReader reader = null;
 		try {
-			PdfReader reader = new PdfReader(pathToPDF);
+			reader = new PdfReader(pathToPDF);
 			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
 				String page = PdfTextExtractor.getTextFromPage(reader, i);
 				String cnpjRegex = "(\\d{2}.\\d{3}.\\d{3}\\/\\d{4}-\\d{2})";
@@ -262,6 +262,8 @@ public class CAPrintReader {
 			if (e instanceof InvalidPdfException || e instanceof InvalidCAException)
 				throw e;
 			Logger.trace(e, "CA file " + pathToPDF);
+		} finally {
+			reader.close();
 		}
 		return ca;
 	}
