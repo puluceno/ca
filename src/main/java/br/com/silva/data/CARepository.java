@@ -1,11 +1,15 @@
 package br.com.silva.data;
 
 import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.exists;
 import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
 import static com.mongodb.client.model.Sorts.ascending;
+import static com.mongodb.client.model.Sorts.descending;
+import static com.mongodb.client.model.Updates.set;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,9 +22,7 @@ import org.bson.types.ObjectId;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 
-import br.com.silva.model.CAConstants;
 import br.com.silva.resources.MongoResource;
-import br.com.silva.tools.FileTools;
 
 public class CARepository {
 	private static MongoCollection<Document> caCollection = MongoResource.getDataBase("ca").getCollection("ca");
@@ -28,9 +30,10 @@ public class CARepository {
 	public static Document findCA(Document query, String... fields) {
 		Document ca;
 		if (fields != null && fields.length > 0) {
-			ca = caCollection.find(query).projection(fields(include(fields), excludeId())).first();
+			ca = caCollection.find(and(query, exists("removed", false)))
+					.projection(fields(include(fields), excludeId())).first();
 		} else {
-			ca = caCollection.find(query).limit(1).first();
+			ca = caCollection.find(and(query, exists("removed", false))).limit(1).first();
 		}
 
 		return ca;
@@ -38,14 +41,16 @@ public class CARepository {
 
 	public static ArrayList<Document> findCAList(Document query) {
 		if (query.isEmpty()) {
-			ArrayList<Document> allCA = caCollection.find().limit(100).into(new ArrayList<Document>());
+			ArrayList<Document> allCA = caCollection.find(exists("removed", false)).limit(200).sort(descending("date"))
+					.into(new ArrayList<Document>());
 			allCA.add(new Document("count", count()));
 			return allCA;
 		}
 		Boolean exactSearch = Boolean.valueOf(query.getString("exactSearch"));
 		if (exactSearch) {
 			query.remove("exactSearch");
-			ArrayList<Document> exact = caCollection.find(query).into(new ArrayList<Document>());
+			ArrayList<Document> exact = caCollection.find(and(query, exists("removed", false)))
+					.into(new ArrayList<Document>());
 			exact.add(new Document("count", (int) caCollection.count(query)));
 			return exact;
 		}
@@ -55,6 +60,7 @@ public class CARepository {
 			query.put(key, ".*" + query.getString(key) + ".*");
 			regexes.add(regex(key, query.getString(key), "i"));
 		});
+		regexes.add(exists("removed", false));
 
 		ArrayList<Document> cas = caCollection.find(and(regexes)).sort(ascending("number"))
 				.into(new ArrayList<Document>());
@@ -75,8 +81,12 @@ public class CARepository {
 	}
 
 	public static boolean delete(String id) {
-		FileTools.deleteFile(CAConstants.CA_DIR + caCollection.find(new Document("_id", new ObjectId(id)))
-				.projection(fields(include("fileName"), excludeId())).first().getString("fileName"));
-		return caCollection.deleteOne(new Document("_id", new ObjectId(id))).wasAcknowledged();
+		// TODO: do not remove file yet. Only do it after we have the historic
+		// of every CA
+		// FileTools.deleteFile(CAConstants.CA_DIR + caCollection.find(new
+		// Document("_id", new ObjectId(id)))
+		// .projection(fields(include("fileName"),
+		// excludeId())).first().getString("fileName"));
+		return caCollection.updateOne(eq("_id", new ObjectId(id)), set("removed", true)).wasAcknowledged();
 	}
 }

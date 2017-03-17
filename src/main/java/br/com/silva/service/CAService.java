@@ -18,6 +18,7 @@ import org.bson.Document;
 import org.eclipse.jetty.http.HttpMethod;
 import org.pmw.tinylog.Logger;
 
+import br.com.silva.business.AgentBusiness;
 import br.com.silva.business.AnalysisBusiness;
 import br.com.silva.business.CAFormReader;
 import br.com.silva.business.CAPrintReader;
@@ -26,6 +27,7 @@ import br.com.silva.business.LoginBusiness;
 import br.com.silva.business.PDFImporter;
 import br.com.silva.business.UserBusiness;
 import br.com.silva.crawler.CAEPIDownloader;
+import br.com.silva.data.AgentRepository;
 import br.com.silva.data.CARepository;
 import br.com.silva.data.DurabilityRepository;
 import br.com.silva.data.EquipmentRepository;
@@ -34,6 +36,7 @@ import br.com.silva.data.ParamsRepository;
 import br.com.silva.data.ProfileRepository;
 import br.com.silva.data.UpdateRepository;
 import br.com.silva.data.UserRepository;
+import br.com.silva.data.WorkingHoursRepository;
 import br.com.silva.model.CAConstants;
 import br.com.silva.model.JsonTransformer;
 import br.com.silva.model.Messages;
@@ -91,6 +94,14 @@ public class CAService {
 
 			get("/user/info", (req, res) -> {
 				return JsonTransformer.toJson(UserBusiness.findUserExcludeFields(req));
+			});
+
+			get("/agent", (req, res) -> {
+				return JsonTransformer.toJson(AgentRepository.findAll());
+			});
+
+			get("/workingHours", (req, res) -> {
+				return JsonTransformer.toJson(WorkingHoursRepository.findAll());
 			});
 
 			post("/fileUrl", (req, res) -> {
@@ -162,6 +173,10 @@ public class CAService {
 
 			post("/user/password", (req, res) -> {
 				return UserBusiness.changePassword(req, req.body());
+			});
+
+			post("/agent", (req, res) -> {
+				return AgentBusiness.checkAndInsert(req);
 			});
 
 			post("/analysis", (req, res) -> {
