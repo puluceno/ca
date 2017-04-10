@@ -72,6 +72,18 @@ public class CARepository {
 		return (int) caCollection.count();
 	}
 
+	public static boolean updateCA(String json) {
+		try {
+			Document update = Document.parse(json);
+			Bson eq = eq("_id", update.get("id"));
+			Document query = new Document(update.getString("key"), update.getString("value"));
+			Document findOneAndUpdate = caCollection.findOneAndUpdate(eq, new Document("$set", query));
+			return findOneAndUpdate != null;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@SuppressWarnings("unused")
 	public static void createEquipmentCollection() {
 		AggregateIterable<Document> output = caCollection.aggregate(Arrays

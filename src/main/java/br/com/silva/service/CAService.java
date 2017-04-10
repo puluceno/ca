@@ -150,6 +150,10 @@ public class CAService {
 				return CAFormReader.readAndSave(req);
 			});
 
+			post("/updateca", (req, res) -> {
+				return CARepository.updateCA(req.body());
+			});
+
 			post("/durability", (req, res) -> {
 				req.attribute("org.eclipse.jetty.multipartConfig",
 						new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
