@@ -34,6 +34,8 @@ import com.gargoylesoftware.htmlunit.WebWindowListener;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
@@ -63,7 +65,7 @@ public class CAEPIDownloader extends Thread {
 	}
 
 	public static void crawlCAS() throws Exception {
-		int threads = 2;
+		int threads = 1;
 		Logger.info("Procedure started. Running with {} threads", threads);
 
 		updateList = updateCollection.find().projection(fields(include("number", "processNumber"), excludeId()))
@@ -150,6 +152,20 @@ public class CAEPIDownloader extends Thread {
 					}
 				}
 
+				// ACQUIRE HISTORY
+				HtmlTable table = (HtmlTable) page3.getElementById("PlaceHolderConteudo_grdListaHistoricoAlteracao");
+				List<Document> history = new ArrayList<Document>();
+				if (table != null) {
+					for (int i = 1; i < table.getRowCount(); i++) {
+						for (final HtmlTableCell cell : table.getRow(i).getCells()) {
+							if (cell.getIndex() == 1)
+								history.add(new Document("date", cell.asText()));
+							if (cell.getIndex() == 2)
+								history.get(i - 1).append("status", cell.asText());
+						}
+					}
+				}
+
 				Page click = viewCA.click();
 				int tries3 = 40;
 				while (tries3 > 0 && windows.size() == 0) {
@@ -164,6 +180,8 @@ public class CAEPIDownloader extends Thread {
 				pdf.cleanUp();
 
 				readPDF(beginCA, caNumber, click, is);
+				Logger.info("CA {} updated: {}", caNumber,
+						caCollection.updateMany(eq("number", caNumber), set("history", history)).wasAcknowledged());
 
 			} catch (Exception e) {
 				if (e instanceof CAEPINotFoundException && e.getMessage().equals("105")) {

@@ -31,9 +31,9 @@ public class CARepository {
 		Document ca;
 		if (fields != null && fields.length > 0) {
 			ca = caCollection.find(and(query, exists("removed", false)))
-					.projection(fields(include(fields), excludeId())).first();
+					.projection(fields(include(fields), excludeId())).sort(descending("date")).first();
 		} else {
-			ca = caCollection.find(and(query, exists("removed", false))).limit(1).first();
+			ca = caCollection.find(and(query, exists("removed", false))).sort(descending("date")).limit(1).first();
 		}
 
 		return ca;

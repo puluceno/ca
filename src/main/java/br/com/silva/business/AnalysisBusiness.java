@@ -22,13 +22,18 @@ public class AnalysisBusiness {
 		try (BufferedReader agentsReader = new BufferedReader(
 				new InputStreamReader(req.raw().getPart("agents").getInputStream(), StandardCharsets.UTF_8));
 				BufferedReader deliveriesReader = new BufferedReader(new InputStreamReader(
-						req.raw().getPart("deliveries").getInputStream(), StandardCharsets.UTF_8))) {
+						req.raw().getPart("deliveries").getInputStream(), StandardCharsets.UTF_8));
+				BufferedReader laborsReader = new BufferedReader(
+						new InputStreamReader(req.raw().getPart("labors").getInputStream(), StandardCharsets.UTF_8));) {
 
 			List<LinkedTreeMap> agents = new Gson().fromJson(agentsReader, List.class);
 			List<LinkedTreeMap> deliveries = new Gson().fromJson(deliveriesReader, List.class);
+			List<LinkedTreeMap> labors = new Gson().fromJson(laborsReader, List.class);
 
-			if (!isCAValid(agents, deliveries)) {
-				return Messages.CA_EXPIRED_WHEN_DELIVERED;
+			// Verify CA validity
+			Messages isCAValid = isCAValid(agents, deliveries);
+			if (isCAValid != null) {
+				return isCAValid;
 			}
 
 		} catch (Exception e) {
@@ -37,14 +42,23 @@ public class AnalysisBusiness {
 		return null;
 	}
 
-	private static boolean isCAValid(List<LinkedTreeMap> agents, List<LinkedTreeMap> deliveries) {
+	private static Messages isCAValid(List<LinkedTreeMap> agents, List<LinkedTreeMap> deliveries) {
 		for (LinkedTreeMap delivery : deliveries) {
 			delivery.put("deliveryDate", TimeTools.convertDate((String) delivery.get("deliveryDate")));
 			Document ca = CARepository.findCA(new Document("number", String.valueOf(delivery.get("ca"))));
 
 			if (!TimeTools.compareStringDates(ca.getString("date"), (String) delivery.get("deliveryDate")))
-				return false;
+				return Messages.CA_EXPIRED_WHEN_DELIVERED;
+
+			for (LinkedTreeMap agent : agents) {
+				agent.put("startDate", TimeTools.convertDate((String) agent.get("startDate")));
+
+				if (!TimeTools.compareStringDates((String) agent.get("startDate"),
+						(String) delivery.get("deliveryDate")))
+					return Messages.STARTED_WITHOUT_PROTECTION;
+			}
+
 		}
-		return true;
+		return null;
 	}
 }
