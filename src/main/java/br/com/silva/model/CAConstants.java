@@ -5,6 +5,7 @@ import java.io.File;
 public class CAConstants {
 	public static String HOME_DIR = System.getProperty("user.home") + File.separator;
 	public static final String PDF_EXTENSION = ".pdf";
+	public static final String BKP_FILE = "CAs.zip";
 
 	public static final String FILES_DIR = File.separator + "var" + File.separator + "www" + File.separator + "html"
 			+ File.separator + "files" + File.separator;

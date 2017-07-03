@@ -27,7 +27,6 @@ import org.pmw.tinylog.Logger;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.WebWindow;
 import com.gargoylesoftware.htmlunit.WebWindowEvent;
 import com.gargoylesoftware.htmlunit.WebWindowListener;
@@ -96,14 +95,12 @@ public class CAEPIDownloader extends Thread {
 				processNumber = ((Document) updateList[number.getAndIncrement()]).getString("processNumber");
 			}
 
-			WebClient webClient = initializeClient();
+			final LinkedList<WebWindow> windows = new LinkedList<WebWindow>();
 			Logger.info("Downloading CA {}", caNumber);
-
-			try {
+			try (WebClient webClient = initializeClient()) {
 				long beginCA = new Date().getTime();
 				URL url = new URL("http://caepi.mte.gov.br/internet/ConsultaCAInternet.aspx");
 
-				final LinkedList<WebWindow> windows = new LinkedList<WebWindow>();
 				webClient.addWebWindowListener(new WebWindowListener() {
 					@Override
 					public void webWindowClosed(WebWindowEvent event) {
@@ -124,36 +121,36 @@ public class CAEPIDownloader extends Thread {
 				HtmlTextInput inputNumber = (HtmlTextInput) page.getElementById("txtNumeroCA");
 				inputNumber.setValueAttribute(caNumber);
 
-				HtmlSubmitInput search = (HtmlSubmitInput) page.getElementById("btnConsultar");
-				HtmlPage page2 = search.click();
+				HtmlSubmitInput submitPage = (HtmlSubmitInput) page.getElementById("btnConsultar");
+				page = submitPage.click();
 
 				HtmlInput details = null;
 				int tries = 40;
 				String xpath = ".//td[contains(.,'" + processNumber + "')]/following-sibling::td[3]/input";
 				while (tries > 0 && details == null) {
 					tries--;
-					details = (HtmlInput) page2.getFirstByXPath(xpath);
-					synchronized (page2) {
-						page2.wait(1500);
+					details = (HtmlInput) page.getFirstByXPath(xpath);
+					synchronized (page) {
+						page.wait(1500);
 					}
 				}
 				if (details == null)
 					throw new CAEPINotFoundException("105");
-				HtmlPage page3 = details.click();
+				page = details.click();
 
-				HtmlSubmitInput viewCA = null;
+				submitPage = null;
 
 				int tries2 = 40;
-				while (tries2 > 0 && viewCA == null) {
+				while (tries2 > 0 && submitPage == null) {
 					tries2--;
-					viewCA = (HtmlSubmitInput) page3.getElementById("PlaceHolderConteudo_btnVisualizarCA");
-					synchronized (page3) {
-						page3.wait(1500);
+					submitPage = (HtmlSubmitInput) page.getElementById("PlaceHolderConteudo_btnVisualizarCA");
+					synchronized (page) {
+						page.wait(1500);
 					}
 				}
 
 				// ACQUIRE HISTORY
-				HtmlTable table = (HtmlTable) page3.getElementById("PlaceHolderConteudo_grdListaHistoricoAlteracao");
+				HtmlTable table = (HtmlTable) page.getElementById("PlaceHolderConteudo_grdListaHistoricoAlteracao");
 				List<Document> history = new ArrayList<Document>();
 				if (table != null) {
 					for (int i = 1; i < table.getRowCount(); i++) {
@@ -166,20 +163,18 @@ public class CAEPIDownloader extends Thread {
 					}
 				}
 
-				Page click = viewCA.click();
+				page = submitPage.click();
 				int tries3 = 40;
 				while (tries3 > 0 && windows.size() == 0) {
 					tries3--;
-					synchronized (click) {
-						click.wait(1500);
+					synchronized (page) {
+						page.wait(1500);
 					}
 				}
-				WebWindow latestWindow = windows.getLast();
-				WebResponse pdf = latestWindow.getEnclosedPage().getWebResponse();
-				InputStream is = pdf.getContentAsStream();
-				pdf.cleanUp();
 
-				readPDF(beginCA, caNumber, click, is);
+				InputStream is = windows.getLast().getEnclosedPage().getWebResponse().getContentAsStream();
+
+				readPDF(beginCA, caNumber, page, is);
 				Logger.info("CA {} updated: {}", caNumber,
 						caCollection.updateMany(eq("number", caNumber), set("history", history)).wasAcknowledged());
 
@@ -194,8 +189,9 @@ public class CAEPIDownloader extends Thread {
 					Logger.trace(e);
 				}
 			} finally {
-				webClient.getCurrentWindow().getJobManager().removeAllJobs();
-				webClient.close();
+				System.gc();
+				// webClient.getCurrentWindow().getJobManager().removeAllJobs();
+				// webClient.close();
 			}
 		}
 		Logger.info("Operarion finished, there are no CA's left in the list");
@@ -288,6 +284,7 @@ public class CAEPIDownloader extends Thread {
 		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies")
 				.setLevel(Level.OFF);
+
 		return webClient;
 	}
 }

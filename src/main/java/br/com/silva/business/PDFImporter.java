@@ -46,7 +46,7 @@ public class PDFImporter {
 	}
 
 	public static void importAllPDF() {
-		caCollection.drop();
+		// caCollection.drop();
 		caStatusCollection.drop();
 		long beginCA = new Date().getTime();
 		Set<String> files = new HashSet<String>();

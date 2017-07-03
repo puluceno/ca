@@ -104,6 +104,10 @@ public class CAService {
 				return JsonTransformer.toJson(WorkingHoursRepository.findAll());
 			});
 
+			get("/backup", (req, res) -> {
+				return FileTools.createBackup();
+			});
+
 			post("/fileUrl", (req, res) -> {
 				String url = req.body();
 				if (url != null && !url.isEmpty())
@@ -247,15 +251,16 @@ public class CAService {
 		// TODO: verify the methods below, if the database is consistent, do not
 		// drop anything
 		// PDFImporter.importAllPDF();
-		// FileImporter.scheduleImport();
+		FileImporter.scheduleImport();
 
 	}
 
 	private static void clearLogs() {
-		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.SEVERE);
+		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies")
-				.setLevel(Level.SEVERE);
-		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.SEVERE);
+				.setLevel(Level.OFF);
+		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
+		java.util.logging.Logger.getLogger("com.mongodb.diagnostics.logging.JULLogger").setLevel(Level.OFF);
 	}
 
 }

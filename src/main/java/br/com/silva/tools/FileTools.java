@@ -17,6 +17,7 @@ import com.github.junrar.Archive;
 import com.github.junrar.impl.FileVolumeManager;
 import com.github.junrar.rarfile.FileHeader;
 
+import br.com.silva.model.CAConstants;
 import spark.Request;
 
 public class FileTools {
@@ -106,5 +107,13 @@ public class FileTools {
 
 	public static boolean deleteFile(String fullFilePath) {
 		return new File(fullFilePath).delete();
+	}
+
+	public static String createBackup() {
+		if (ZipHelper.zipFolder(false, CAConstants.CA_DIR.substring(0, CAConstants.CA_DIR.length() - 1)))
+			return CAConstants.BKP_FILE;
+		else
+			return "Erro ao gerar o backup.";
+
 	}
 }
