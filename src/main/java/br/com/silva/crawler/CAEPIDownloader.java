@@ -56,7 +56,7 @@ public class CAEPIDownloader extends Thread {
 			.getCollection("castatus");
 	private static MongoCollection<Document> updateCollection = MongoResource.getDataBase("ca").getCollection("update");
 
-	private static AtomicInteger number = new AtomicInteger(0);
+	private static AtomicInteger number;
 	private static Object[] updateList;
 
 	public static void main(String[] args) throws Exception {
@@ -64,6 +64,7 @@ public class CAEPIDownloader extends Thread {
 	}
 
 	public static void crawlCAS() throws Exception {
+		number = new AtomicInteger(0);
 		int threads = 1;
 		Logger.info("Procedure started. Running with {} threads", threads);
 

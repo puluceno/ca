@@ -49,6 +49,7 @@ public class FileImporter {
 				try {
 					importCAList();
 					CAEPIDownloader.crawlCAS();
+					// TODO: delete the backup file
 				} catch (Exception e) {
 					Logger.trace(e);
 				}
